@@ -44,7 +44,7 @@ snip get 1
 ### From Source
 
 ```bash
-git clone https://github.com/yourusername/snip.git
+git clone https://github.com/matheuzgomes/snip.git
 cd snip
 go build -o snip main.go
 sudo mv snip /usr/local/bin/
