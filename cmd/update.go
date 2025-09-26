@@ -10,7 +10,13 @@ import (
 var title string
 
 func init() {
-	updateCmd.Flags().StringVarP(&title, "title", "t", "", "If you want to update the title of the note, you can use this flag")
+	updateCmd.Flags().StringVarP(
+		&title,
+		"title",
+		"t",
+		"",
+		"If you want to update the title of the note, you can use this flag e.g. --title 'New Title'",
+	)
 }
 
 var updateCmd = &cobra.Command{
