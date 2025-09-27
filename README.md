@@ -36,7 +36,7 @@ snip find "meeting"
 snip update 1
 
 # Get a specific note by ID
-snip get 1
+snip show 1
 ```
 
 ## 🚀 Installation
