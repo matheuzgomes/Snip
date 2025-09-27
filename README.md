@@ -18,7 +18,7 @@ A fast and efficient command-line note-taking tool built with Go. Snip helps you
 
 ```bash
 # Create a new note
-snip create "Meeting Notes" "Discussed project timeline and deliverables"
+snip create "Meeting Notes"
 
 # List all notes (newest first)
 snip list
