@@ -1,5 +1,5 @@
 <div align="left" style="margin-bottom: 15px; display: flex; align-items: flex-start;">
-  <img src="assets/snip_logo.png" alt="Snip Logo" width="45" style="margin-right: 10px;">
+  <img src="assets/snip_logo.png" alt="Snip Logo" width="100" height="110" style="margin-right: 10px;">
   <h1 style="margin: 0; margin-top: 3px;">Snip</h1>
 </div>
 
