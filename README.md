@@ -1,5 +1,5 @@
-<div align="left" style="margin-bottom: 15px; display: flex; align-items: flex-start;">
-  <img src="assets/snip_logo.png" alt="Snip Logo" width="100" height="110" style="margin-right: 10px; border-radius: 16px; border: 2px solid #e0e0e0;">
+<div align="left" style="margin-bottom: 15px; display: flex; align-items: flex-start; margin-left: -20px;">
+  <img src="assets/snip_logo.png" alt="Snip Logo" width="120" height="130" style="margin-right: 15px; border-radius: 16px; border: 2px solid #e0e0e0;">
   <h1 style="margin: 0; margin-top: 3px;">Snip</h1>
 </div>
 
@@ -111,7 +111,7 @@ In construction...
 
 ### Coming Soon
 
-- ~~**🗑️ Delete Notes**: Remove notes you no longer need~~
+- ~~**🗑️ Delete Notes**: Remove notes you no longer need~~ Done!
 - **🏷️ Tags**: Organize notes with custom tags
 - **📁 Categories**: Group notes into categories
 - **🔗 Note Linking**: Link related notes together
