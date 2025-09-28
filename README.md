@@ -1,6 +1,6 @@
 <div align="left">
-  <img src="assets/snip_logo.png" alt="Snip Logo" width="80" style="vertical-align: middle; margin-right: 15px;">
-  <h1 style="display: inline-block; margin: 0;">Snip </h1>
+  <h1 style="display: inline-block; margin: 0;">Snip</h1>
+  <img src="assets/snip_logo.png" alt="Snip Logo" width="80" style="vertical-align: middle; margin-left: 15px; border-radius: 15px;">
 </div>
 
 A fast and efficient command-line note-taking tool built with Go. Snip helps you capture, organize, and search your notes.
