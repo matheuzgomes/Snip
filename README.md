@@ -1,6 +1,6 @@
-<div align="left">
-  <h1 style="display: inline-block; margin: 0;">Snip</h1>
-  <img src="assets/snip_logo.png" alt="Snip Logo" width="80" style="vertical-align: middle; margin-left: 15px; border-radius: 15px;">
+<div align="left" style="display: flex; align-items: center; gap: 15px;">
+  <img src="assets/snip_logo.png" alt="Snip Logo" width="45" style="border-radius: 15px; margin-bottom: 2px;">
+  <h1 style="margin: 0'; margin-right: 15px; text-align: center;">Snip</h1>
 </div>
 
 A fast and efficient command-line note-taking tool built with Go. Snip helps you capture, organize, and search your notes.
@@ -14,6 +14,7 @@ A fast and efficient command-line note-taking tool built with Go. Snip helps you
 - **🔍 Search Notes**: Full-text search across all notes using SQLite FTS4
 - **✏️ Edit Notes**: Update existing notes using your preferred editor
 - **📖 Get Notes**: Retrieve specific notes by ID
+- **🗑️ Delete Notes**: Remove notes you no longer need
 - **⚡ Fast Performance**: SQLite database with optimized indexes
 - **🔧 Editor Integration**: Supports nano, vim, vi, or custom `$EDITOR`
 
@@ -40,6 +41,9 @@ snip update 1
 
 # Get a specific note by ID
 snip show 1
+
+# Delete a specific note by ID
+snip delete 1
 ```
 
 ## 🚀 Installation
