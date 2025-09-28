@@ -1,13 +1,7 @@
-<table>
-  <tr>
-    <td style="border: none;">
-      <img src="assets/snip_logo.png" alt="Snip Logo" width="45" style="border-radius: 15px; margin-bottom: 2px;">
-    </td>
-    <td style="border: none;">
-      <h1 style="margin: 0; margin-left: -15px; text-align: left;">Snip</h1>
-    </td>
-  </tr>
-</table>
+<div align="left" style="margin-bottom: 15px; display: flex; align-items: flex-start;">
+  <img src="assets/snip_logo.png" alt="Snip Logo" width="45" style="margin-right: 10px;">
+  <h1 style="margin: 0; margin-top: 3px;">Snip</h1>
+</div>
 
 A fast and efficient command-line note-taking tool built with Go. Snip helps you capture, organize, and search your notes.
 
