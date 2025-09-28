@@ -104,7 +104,7 @@ In construction...
 
 ### Coming Soon
 
-- **🗑️ Delete Notes**: Remove notes you no longer need
+- ~~**🗑️ Delete Notes**: Remove notes you no longer need~~
 - **🏷️ Tags**: Organize notes with custom tags
 - **📁 Categories**: Group notes into categories
 - **🔗 Note Linking**: Link related notes together

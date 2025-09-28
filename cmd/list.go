@@ -18,17 +18,22 @@ func init() {
 var listCmd = &cobra.Command{
 	Use:     "list",
 	Aliases: []string{"ls"},
-	Short:   "List all notes",
-	Long: `List all notes in chronological order.
+	Short:   "Display all notes with sorting and detail options",
+	Long: `Display all your notes in a organized list format with customizable sorting and verbosity.
 
-By default, notes are sorted by creation date in descending order (newest first).
-Use the --asc or -a flag to sort in ascending order (oldest first).
-Use the --verbose or -v flag to show more information about the notes.
+By default, notes are displayed with newest first (descending order by creation date).
+You can control the output format and sorting to match your workflow preferences.
+
+Flags:
+  --asc, -a      Sort chronologically (oldest first)
+  --verbose, -v  Show detailed information including timestamps and IDs
 
 Examples:
-snip list or snip ls  # Show newest notes first
-snip list --asc, -a     # Show oldest notes first
-snip list --verbose, -v # Show more information about the notes`,
+  snip list                    # Show newest notes first (default)
+  snip ls                      # Same as above (alias)
+  snip list --asc              # Show oldest notes first
+  snip list -v                 # Show detailed note information
+  snip list --asc --verbose    # Oldest first with full details`,
 	Run: func(cmd *cobra.Command, args []string) {
 		if err := executeWithHandler(func(h handler.Handler) error {
 			return h.ListNotes(isAsc, verbose)

@@ -15,6 +15,7 @@ type Repository interface {
 	Update(id int, content string, title string) error
 	Delete(id int) error
 	Search(term string) ([]*Note, error)
+	CheckByID(id int) error
 	Close() error
 }
 
@@ -62,18 +63,32 @@ func (r *repository) GetByID(id int) (*Note, error) {
 	`
 
 	note := &Note{}
+
 	err := r.db.QueryRow(query, id).Scan(
 		&note.ID, &note.Title, &note.Content, &note.CreatedAt, &note.UpdatedAt,
 	)
 
 	if err != nil {
 		if err == sql.ErrNoRows {
-			return nil, errors.New("note not found")
+			return nil, errors.New("not found")
 		}
 		return nil, err
 	}
 
 	return note, nil
+}
+
+func (r *repository) CheckByID(id int) error {
+	query := `SELECT id FROM notes WHERE id = ?`
+
+	if err := r.db.QueryRow(query, id).Scan(&id); err != nil {
+		if err == sql.ErrNoRows {
+			return errors.New("not found")
+		}
+		return err
+	}
+
+	return nil
 }
 
 func (r *repository) GetAll(isAsc bool) ([]*Note, error) {
@@ -108,27 +123,26 @@ func (r *repository) GetAll(isAsc bool) ([]*Note, error) {
 }
 
 func (r *repository) Update(id int, content string, title string) error {
-    var query string
-    var args []any
+	var query string
+	var args []any
 
-    query = `
+	query = `
         UPDATE notes 
         SET content = ?, updated_at = ?
-        WHERE id = ?
     `
-    args = []any{content, time.Now(), id}
+	args = []any{content, time.Now()}
 
-    if title != "" {
-        query = `
-            UPDATE notes 
-            SET content = ?, title = ?, updated_at = ?
-            WHERE id = ?
-        `
-        args = []any{content, title, time.Now(), id}
-    }
+	if title != "" {
+		query += `, title = ?`
+		args = append(args, title)
+	}
 
-    _, err := r.db.Exec(query, args...)
-    return err
+	query += ` WHERE id = ?`
+
+	args = append(args, id)
+
+	_, err := r.db.Exec(query, args...)
+	return err
 }
 
 func (r *repository) Delete(id int) error {

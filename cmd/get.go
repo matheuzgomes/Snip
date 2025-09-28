@@ -12,15 +12,21 @@ func init() {
 }
 
 var showCmd = &cobra.Command{
-	Use:   "show",
-	Short: "Show a specific note",
-	Long: `Show a specific note by ID.
+	Use:   "show [id]",
+	Short: "Display the content of a specific note by ID",
+	Long: `Display the full content of a specific note identified by its unique ID.
 
-Use the --verbose or -v flag to show more information about the note.
+This command shows the note's title and content in a readable format. Use the verbose
+flag to see additional metadata like creation and modification timestamps.
+
+Flags:
+  --verbose, -v  Show detailed metadata (timestamps, ID, etc.)
 
 Examples:
-snip show 1          # Show note with ID 1
-snip show 1 --verbose, -v # Show more information about the note`,
+  snip show 1              # Display note with ID 1
+  snip show 42             # Display note with ID 42  
+  snip show 1 --verbose    # Show note 1 with full metadata
+  snip show 1 -v           # Same as above (short flag)`,
 	Args: cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 		if err := executeWithHandler(func(h handler.Handler) error {

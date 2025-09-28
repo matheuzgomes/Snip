@@ -19,4 +19,5 @@ func init() {
 	rootCmd.AddCommand(showCmd)
 	rootCmd.AddCommand(findCmd)
 	rootCmd.AddCommand(updateCmd)
+	rootCmd.AddCommand(deleteCmd)
 }

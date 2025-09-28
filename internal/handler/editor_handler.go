@@ -13,11 +13,18 @@ func NewEditorHandler() *EditorHandler {
 	return &EditorHandler{}
 }
 
-func (e *EditorHandler) HandleEditor() (*os.File, error) {
+func (e *EditorHandler) HandleEditor(content string) (*os.File, error) {
 
 	tempFile, err := e.CreateTempFile()
 	if err != nil {
 		return nil, err
+	}
+
+	if content != "" {
+		if _, err := tempFile.WriteString(content); err != nil {
+				return nil, fmt.Errorf("failed to write content to temp file: %w", err)
+			}
+			tempFile.Close()
 	}
 
 	editor := e.GetEditor()
@@ -32,30 +39,7 @@ func (e *EditorHandler) HandleEditor() (*os.File, error) {
 
 	return tempFile, nil
 }
-func (e *EditorHandler) HandleEditorWithContent(content string) (*os.File, error) {
 
-	tempFile, err := e.CreateTempFile()
-	if err != nil {
-		return nil, err
-	}
-
-	if _, err := tempFile.WriteString(content); err != nil {
-		return nil, fmt.Errorf("failed to write content to temp file: %w", err)
-	}
-	tempFile.Close()
-
-	editor := e.GetEditor()
-	cmd := exec.Command(editor, tempFile.Name())
-	cmd.Stdin = os.Stdin
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stderr
-
-	if err := cmd.Run(); err != nil {
-		return nil, fmt.Errorf("failed to open editor: %w", err)
-	}
-
-	return tempFile, nil
-}
 
 func (e *EditorHandler) GetEditor() string {
 	if editor := os.Getenv("EDITOR"); editor != "" {

@@ -14,6 +14,7 @@ type Handler interface {
 	GetNote(idStr string, verbose bool) error
 	FindNotes(term string) error
 	UpdateNote(idStr string, title string) error
+	DeleteNote(idStr string) error
 }
 
 type handler struct {
@@ -36,8 +37,8 @@ func (h *handler) CreateNote(title string) error {
     if err := h.validator.ValidateNote(title); err != nil {
         return err
     }
-    
-    tempFile, err := h.editorHandler.HandleEditor()
+
+    tempFile, err := h.editorHandler.HandleEditor("")
     if err != nil {
         return err
     }
@@ -106,7 +107,7 @@ func (h *handler) GetNote(idStr string, verbose bool) error {
 
 	note, err := h.noteRepo.GetByID(id)
 	if err != nil {
-		return fmt.Errorf("failed to fetch note: %w", err)
+		return fmt.Errorf("failed to fetch note -> %w", err)
 	}
 
 
@@ -156,7 +157,7 @@ func (h *handler) UpdateNote(idStr string, title string) error {
 		return fmt.Errorf("failed to fetch note: %w", err)
 	}
 
-    tempFile, err := h.editorHandler.HandleEditorWithContent(note.Content)
+    tempFile, err := h.editorHandler.HandleEditor(note.Content)
     if err != nil {
         return err
     }
@@ -174,5 +175,24 @@ func (h *handler) UpdateNote(idStr string, title string) error {
     
     fmt.Printf("Note updated successfully!\n")
     
+    return nil
+}
+
+func (h *handler) DeleteNote(idStr string) error {
+	id, err := strconv.Atoi(idStr)
+	if err != nil {
+		return fmt.Errorf("invalid note ID: %d", id)
+	}
+
+	if err := h.noteRepo.CheckByID(id); err != nil {
+		return fmt.Errorf("this note does not exist: %w", err)
+	}
+
+    if err := h.noteRepo.Delete(id); err != nil {
+        return fmt.Errorf("failed to delete note: %w", err)
+    }
+
+    fmt.Printf("Note deleted successfully!\n")
+
     return nil
 }

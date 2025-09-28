@@ -21,19 +21,19 @@ func getRepository() (note.Repository, error) {
 	return globalRepo, err
 }
 
-func setupHandler() (handler.Handler, func() error, error) {
+func setupHandler() (handler.Handler, error) {
 	repo, err := getRepository()
 	if err != nil {
-		return nil, nil, fmt.Errorf("failed to connect to database: %w", err)
+		return nil, fmt.Errorf("failed to connect to database: %w", err)
 	}
 
 	h := handler.NewHandler(repo)
 
-	return h, func() error { return nil }, nil
+	return h, nil
 }
 
 func executeWithHandler(fn func(handler.Handler) error) error {
-	h, _, err := setupHandler()
+	h, err := setupHandler()
 	if err != nil {
 		return fmt.Errorf("failed to setup handler: %w", err)
 	}
