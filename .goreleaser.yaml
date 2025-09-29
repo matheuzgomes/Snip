@@ -16,16 +16,6 @@ builds:
       - CGO_ENABLED=1
     goos:
       - linux
-      - darwin
-    goarch:
-      - amd64
-      - arm64
-    ldflags:
-      - -s -w -X main.version={{.Version}} -X main.commit={{.Commit}} -X main.date={{.Date}}
-  - env:
-      - CGO_ENABLED=0
-    goos:
-      - windows
     goarch:
       - amd64
       - arm64
