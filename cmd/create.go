@@ -8,23 +8,35 @@ import (
 	"github.com/spf13/cobra"
 )
 
+var message string
+
+func init() {
+	createCmd.Flags().StringVarP(&message, "message", "m", "", "Content of the note")
+}
+
 var createCmd = &cobra.Command{
 	Use:   "create [title]",
-	Short: "Create a new note with title and interactive content editing",
-	Long: `Create a new note by providing a title and opening your default editor for content.
+	Short: "Create a new note with title and optional content",
+	Long: `Create a new note by providing a title and optional content.
 
-The title can be multiple words and will be joined together. After running this command,
-your default editor will open allowing you to write the note content. Save and close
-the editor to create the note.
+The title can be multiple words and will be joined together. You can provide content
+in two ways:
+1. Use the --message flag to provide content directly
+2. If no message is provided, your default editor will open for interactive content editing
 
 Examples:
-  snip create "My Daily Notes"     # Creates note with title "My Daily Notes"
-  snip create Meeting Notes        # Creates note with title "Meeting Notes"
-  snip create TODO                 # Creates note with title "TODO"`,
+  snip create "My Daily Notes"                    # Opens editor for content
+  snip create "Quick Note" --message "Hello!"     # Uses provided message
+  snip create Meeting Notes                       # Opens editor for content
+  snip create TODO --message "Buy milk"           # Uses provided message`,
 	Args: cobra.MinimumNArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 		if err := executeWithHandler(func(h handler.Handler) error {
-			return h.CreateNote(strings.Join(args, " "))
+			var messagePtr *string
+			if message != "" {
+				messagePtr = &message
+			}
+			return h.CreateNote(strings.Join(args, " "), messagePtr)
 		}); err != nil {
 			fmt.Printf("Error: %v\n", err)
 		}
