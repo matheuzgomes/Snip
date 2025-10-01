@@ -12,7 +12,11 @@ func (h *handler) CreateNote(title string, message *string) error {
 		return err
 	}
 
-	contentStr := CheckMessage(message, h)
+	contentStr, err := CheckMessage(message, h)
+	
+	if err != nil {
+		return err
+	}
 
 	newNote := note.NewNote(title, contentStr)
 	if err := h.noteRepo.Create(newNote); err != nil {
@@ -27,22 +31,22 @@ func (h *handler) CreateNote(title string, message *string) error {
 
 
 
-func CheckMessage(message *string, h *handler) string {
+func CheckMessage(message *string, h *handler) (string, error) {
 	if message != nil && *message != "" {
-		return *message
+		return *message, nil
 	}
 
 	tempFile, err := h.editorHandler.HandleEditor("")
 	if err != nil {
-		return ""
+		return "", err
 	}
 	defer h.editorHandler.RemoveTempFile(tempFile)
 
 	content, err := h.editorHandler.ReadTempFile(tempFile)
 	if err != nil {
-		return ""
+		return "", err
 	}
 
 	contentStr := string(content)
-	return contentStr
+	return contentStr, nil
 }
