@@ -1,7 +1,13 @@
 package handler
 
-import "fmt"
+import (
+	"bufio"
+	"fmt"
+	"os"
+)
 
+
+const contentLimit = 50
 
 func (h *handler) ListNotes(isAsc, verbose bool) error {
 	notes, err := h.noteRepo.GetAll(isAsc)
@@ -14,28 +20,29 @@ func (h *handler) ListNotes(isAsc, verbose bool) error {
 		return nil
 	}
 
-	const contentLimit = 50
-
 	fmt.Printf("Found %d note(s):\n\n", len(notes))
 
-	for i, note := range notes {
-		fmt.Printf("[%d] Title: %s\n", note.ID, note.Title)
+	writer := bufio.NewWriter(os.Stdout)
 
+	for _, note := range notes {
+		fmt.Fprintf(writer, "● #%d  %s\n", note.ID, note.Title)
+		
 		content := note.Content
-		if len(content) > contentLimit {
-			content = content[:contentLimit] + "..."
+        if len(content) > contentLimit {
+            content = content[:contentLimit] + "..."
 		}
-		fmt.Printf("Content: %s\n", content)
+
+		fmt.Fprintf(writer, "  └─ %s\n", content)
 
 		if verbose {
-			fmt.Printf("Created: %s\n", note.CreatedAt.Format(h.dateFormat))
-			fmt.Printf("Updated: %s\n", note.UpdatedAt.Format(h.dateFormat))
+			fmt.Fprintf(writer, "  Created: %s\n", note.CreatedAt.Format(h.dateFormat))
+			fmt.Fprintf(writer, "  Updated: %s\n", note.UpdatedAt.Format(h.dateFormat))
 		}
 
-		if i < len(notes)-1 {
-			fmt.Println("---")
-		}
+		fmt.Fprintln(writer)
 	}
+
+	writer.Flush()
 
 	return nil
 }

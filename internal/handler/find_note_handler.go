@@ -2,8 +2,6 @@ package handler
 
 import "fmt"
 
-
-
 func (h *handler) FindNotes(term string) error {
 	notes, err := h.noteRepo.Search(term)
 	if err != nil {
@@ -15,12 +13,16 @@ func (h *handler) FindNotes(term string) error {
 		return nil
 	}
 
-	for i, note := range notes {
-		fmt.Printf("[%d] Title: %s\n", note.ID, note.Title)
-		fmt.Printf("Content: %s\n", note.Content)
-		if i < len(notes)-1 {
-			fmt.Println("---")
+	fmt.Printf("Found %d note(s) matching '%s':\n\n", len(notes), term)
+
+	for _, note := range notes {
+		fmt.Printf("● #%d  %s\n", note.ID, note.Title)
+
+		if note.Content != "" {
+			fmt.Printf("  └─ %s\n", note.Content)
 		}
+
+		fmt.Println()
 	}
 
 	return nil
