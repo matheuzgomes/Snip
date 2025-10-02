@@ -24,7 +24,7 @@ func (h *handler) CreateNote(title string, message *string) error {
 	}
 
 	fmt.Printf("Note created successfully!\n")
-	fmt.Printf("[%d] Title: %s\n", newNote.ID, newNote.Title)
+	fmt.Printf("● #%d  %s\n", newNote.ID, newNote.Title)
 
 	return nil
 }
