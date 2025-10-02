@@ -24,6 +24,9 @@ A fast and efficient command-line note-taking tool built with Go. Snip helps you
 # Create a new note
 snip create "Meeting Notes"
 
+# Create a new note quickly
+snip create "World" --message "Hello!"
+
 # List all notes (newest first)
 snip list
 
@@ -61,7 +64,9 @@ sudo mv snip /usr/local/bin/
 
 We're setting up automated releases using [GoReleaser](https://goreleaser.com/) for easy installation:
 
-In construction...
+Linux binaries are available in the [releases](https://github.com/matheuzgomes/snip/releases) page.
+
+Windows and MacOS binaries are coming soon...
 
 ## 🗄️ Data Storage
 
