@@ -28,3 +28,11 @@ func (v *Validator) ValidateNote(title string) error {
 
 	return nil
 }
+
+
+func (v *Validator) CheckString(s string) *string {
+	if s == "" {
+		return nil
+	}
+	return &s
+}

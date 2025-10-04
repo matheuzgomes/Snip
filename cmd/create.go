@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"github.com/snip/internal/handler"
+	"github.com/snip/internal/validation"
 	"github.com/spf13/cobra"
 )
 
@@ -26,22 +27,18 @@ The title can be multiple words and will be joined together. You can provide con
 in two ways:
 1. Use the --message flag to provide content directly
 2. If no message is provided, your default editor will open for interactive content editing
+3. Use the --tag flag to provide a tag for the note
 
 Examples:
   snip create "My Daily Notes"                    # Opens editor for content
-  snip create "Quick Note" --message "Hello!"     # Uses provided message
+  snip create "Quick Note" --message "Hello!"     # User provided message
   snip create Meeting Notes                       # Opens editor for content
-  snip create TODO --message "Buy milk"           # Uses provided message`,
+  snip create TODO --tag "shopping"               # User provided tag`,
 	Args: cobra.MinimumNArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 		if err := executeWithHandler(func(h handler.Handler) error {
-			stringPtr := func(s string) *string {
-				if s == "" {
-					return nil
-				}
-				return &s
-			}
-			return h.CreateNote(strings.Join(args, " "), stringPtr(message), stringPtr(tag))
+			validator := validation.NewValidator()
+			return h.CreateNote(strings.Join(args, " "), validator.CheckString(message), validator.CheckString(tag))
 		}); err != nil {
 			fmt.Printf("Error: %v\n", err)
 		}

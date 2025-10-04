@@ -1,3 +1,7 @@
+![Snip Logo](assets/snip_logo.png) ![Go](https://img.shields.io/badge/Go-00ADD8?style=for-the-badge&logo=go&logoColor=white) ![SQLite](https://img.shields.io/badge/SQLite-003B57?style=for-the-badge&logo=sqlite&logoColor=white) ![License](https://img.shields.io/badge/license-MIT-green?style=for-the-badge) ![Version](https://img.shields.io/badge/version-0.1.1-blue?style=for-the-badge)
+
+
+
 <div align="left" style="margin-bottom: 15px; display: flex; align-items: flex-start; margin-left: -20px;">
   <img src="assets/snip_logo.png" alt="Snip Logo" width="120" height="130" style="margin-right: 15px; border-radius: 16px; border: 2px solid #e0e0e0;">
   <h1 style="margin: 0; margin-top: 3px;">Snip</h1>
@@ -60,7 +64,7 @@ go build -o snip main.go
 sudo mv snip /usr/local/bin/
 ```
 
-### Using GoReleaser (Coming Soon)
+### Using GoReleaser
 
 We're setting up automated releases using [GoReleaser](https://goreleaser.com/) for easy installation:
 

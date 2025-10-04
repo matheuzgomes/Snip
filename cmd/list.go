@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/snip/internal/handler"
+	"github.com/snip/internal/validation"
 	"github.com/spf13/cobra"
 )
 
@@ -26,6 +27,8 @@ var listCmd = &cobra.Command{
 By default, notes are displayed with newest first (descending order by creation date).
 You can control the output format and sorting to match your workflow preferences.
 
+You can also list notes by tag using the --tag flag.
+
 Flags:
   --asc, -a      Sort chronologically (oldest first)
   --verbose, -v  Show detailed information including timestamps and IDs
@@ -37,14 +40,9 @@ Examples:
   snip list -v                 # Show detailed note information
   snip list --asc --verbose    # Oldest first with full details`,
 	Run: func(cmd *cobra.Command, args []string) {
+		validator := validation.NewValidator()
 		if err := executeWithHandler(func(h handler.Handler) error {
-			stringPtr := func(s string) *string {
-				if s == "" {
-					return nil
-				}
-				return &s
-			}
-			return h.ListNotes(isAsc, verbose, stringPtr(listTag))
+			return h.ListNotes(isAsc, verbose, validator.CheckString(listTag))
 		}); err != nil {
 			fmt.Printf("Error: %v\n", err)
 		}
