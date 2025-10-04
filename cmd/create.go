@@ -10,8 +10,11 @@ import (
 
 var message string
 
+var tag string
+
 func init() {
 	createCmd.Flags().StringVarP(&message, "message", "m", "", "Content of the note")
+	createCmd.Flags().StringVarP(&tag, "tag", "t", "", "Tag of the note")
 }
 
 var createCmd = &cobra.Command{
@@ -32,11 +35,13 @@ Examples:
 	Args: cobra.MinimumNArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 		if err := executeWithHandler(func(h handler.Handler) error {
-			var messagePtr *string
-			if message != "" {
-				messagePtr = &message
+			stringPtr := func(s string) *string {
+				if s == "" {
+					return nil
+				}
+				return &s
 			}
-			return h.CreateNote(strings.Join(args, " "), messagePtr)
+			return h.CreateNote(strings.Join(args, " "), stringPtr(message), stringPtr(tag))
 		}); err != nil {
 			fmt.Printf("Error: %v\n", err)
 		}

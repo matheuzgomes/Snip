@@ -9,10 +9,12 @@ import (
 
 var isAsc bool
 var verbose bool
+var listTag string
 
 func init() {
 	listCmd.Flags().BoolVarP(&isAsc, "asc", "a", false, "List notes in chronological order (oldest first)")
 	listCmd.Flags().BoolVarP(&verbose, "verbose", "v", false, "Show more information about the notes")
+	listCmd.Flags().StringVarP(&listTag, "tag", "t", "", "List notes by tag")
 }
 
 var listCmd = &cobra.Command{
@@ -36,7 +38,13 @@ Examples:
   snip list --asc --verbose    # Oldest first with full details`,
 	Run: func(cmd *cobra.Command, args []string) {
 		if err := executeWithHandler(func(h handler.Handler) error {
-			return h.ListNotes(isAsc, verbose)
+			stringPtr := func(s string) *string {
+				if s == "" {
+					return nil
+				}
+				return &s
+			}
+			return h.ListNotes(isAsc, verbose, stringPtr(listTag))
 		}); err != nil {
 			fmt.Printf("Error: %v\n", err)
 		}

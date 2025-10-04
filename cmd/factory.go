@@ -4,30 +4,38 @@ import (
 	"fmt"
 	"sync"
 
+	"github.com/snip/internal/database"
 	"github.com/snip/internal/handler"
-	"github.com/snip/internal/note"
+	"github.com/snip/internal/repository"
 )
 
 var (
-	globalRepo note.Repository
+	globalNoteRepo repository.NoteRepository
+	globalTagRepo repository.TagRepository
 	repoOnce   sync.Once
 )
 
-func getRepository() (note.Repository, error) {
+func getRepository() (repository.NoteRepository, repository.TagRepository, error) {
 	var err error
 	repoOnce.Do(func() {
-		globalRepo, err = note.NewRepository()
+		db, connectErr := database.Connect()
+		if connectErr != nil {
+			err = connectErr
+			return
+		}
+		globalNoteRepo, err = repository.NewNoteRepository(db)
+		globalTagRepo, err = repository.NewTagRepository(db)
 	})
-	return globalRepo, err
+	return globalNoteRepo, globalTagRepo, err
 }
 
 func setupHandler() (handler.Handler, error) {
-	repo, err := getRepository()
+	noteRepo, tagRepo, err := getRepository()
 	if err != nil {
 		return nil, fmt.Errorf("failed to connect to database: %w", err)
 	}
 
-	h := handler.NewHandler(repo)
+	h := handler.NewHandler(noteRepo, tagRepo)
 
 	return h, nil
 }

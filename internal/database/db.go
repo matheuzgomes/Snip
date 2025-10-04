@@ -33,9 +33,9 @@ func Connect() (*sql.DB, error) {
 		return nil, err
 	}
 
-    if err := ensureDatabase(db); err != nil {
-        return nil, err
-    }
+	if err := ensureDatabase(db); err != nil {
+		return nil, err
+	}
 
 	return db, nil
 }
@@ -50,7 +50,21 @@ func ensureDatabase(db *sql.DB) error {
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
         updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
     );
-    
+
+
+    CREATE TABLE IF NOT EXISTS tags (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT NOT NULL
+    );
+
+    CREATE TABLE IF NOT EXISTS notes_tags (
+        note_id INTEGER NOT NULL,
+        tag_id INTEGER NOT NULL,
+        PRIMARY KEY (note_id, tag_id),
+        FOREIGN KEY (note_id) REFERENCES notes(id) ON DELETE CASCADE,
+        FOREIGN KEY (tag_id) REFERENCES tags(id) ON DELETE CASCADE
+    );
+
     -- Index
     CREATE INDEX IF NOT EXISTS idx_notes_title ON notes(title);
     CREATE INDEX IF NOT EXISTS idx_notes_created_at ON notes(created_at);
