@@ -64,6 +64,17 @@ func (r *tagRepository) GetByName(name string) (*tag.Tag, error) {
 	return tag, nil
 }
 
+
+func (r *tagRepository) Patch(id int, name string) error {
+	query := `UPDATE tags SET name = ? WHERE id = ?`
+	_, err := r.db.Exec(query, name, id)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func (r *tagRepository) GetAll() ([]*tag.Tag, error) {
 	query := `SELECT id, name FROM tags ORDER BY name`
 

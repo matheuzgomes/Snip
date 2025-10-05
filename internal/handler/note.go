@@ -19,6 +19,7 @@ type Handler interface {
 	FindNotes(term string) error
 	UpdateNote(idStr string, title string) error
 	DeleteNote(idStr string) error
+	PatchNote(idStr string, title *string, tag *string) error
 }
 
 type handler struct {
@@ -93,7 +94,11 @@ func (h *handler) ListNotes(isAsc, verbose bool, tag *string) error {
 	const contentLimit = 50
 
 	for _, note := range notes {
-		fmt.Fprintf(writer, "● #%d  %s\n", note.ID, note.Title)
+		tags := ""
+		if note.Tags != nil {
+			tags = *note.Tags
+		}
+		fmt.Fprintf(writer, "● #%d  %s [%s]\n", note.ID, note.Title, tags)
 
 		content := note.Content
 		if len(content) > contentLimit {
@@ -164,6 +169,37 @@ func (h *handler) FindNotes(term string) error {
 
 	return nil
 }
+
+
+func (h *handler) PatchNote(idStr string, title *string, tag *string) error {
+	id, err := strconv.Atoi(idStr)
+	if err != nil {
+		return fmt.Errorf("invalid note ID: %d", id)
+	}
+
+	err = h.noteRepo.CheckByID(id)
+	if err != nil {
+		return fmt.Errorf("failed to fetch note: %w", err)
+	}
+
+	if title != nil && *title != "" {
+		if err := h.noteRepo.Patch(id, *title); err != nil {
+			return fmt.Errorf("failed to update note: %w", err)
+		}
+	}
+
+	if tag != nil && *tag != "" {
+		if err := h.noteRepo.RemoveTagFromNote(id); err != nil {
+			return fmt.Errorf("failed to remove tag from note: %w", err)
+		}
+		if err := h.AssociateTagsWithNote(tag, id); err != nil {
+			return fmt.Errorf("failed to add tag to note: %w", err)
+		}
+	}
+
+	return nil
+}
+
 
 func (h *handler) UpdateNote(idStr string, title string) error {
 	id, err := strconv.Atoi(idStr)

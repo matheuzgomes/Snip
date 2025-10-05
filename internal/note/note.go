@@ -12,6 +12,15 @@ type Note struct {
 	UpdatedAt time.Time `json:"updated_at"`
 }
 
+type NoteWithTags struct {
+	ID int `json:"id"`
+	Title string `json:"title"`
+	Content string `json:"content"`
+	Tags *string `json:"tags"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
+}
+
 
 func NewNote(title, content string) *Note {
 	now := time.Now()

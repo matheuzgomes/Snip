@@ -12,15 +12,16 @@ import (
 type NoteRepository interface {
 	Create(note *note.Note) error
 	GetByID(id int) (*note.Note, error)
-	GetAll(isAsc bool, tagID int) ([]*note.Note, error)
+	GetAll(isAsc bool, tagID int) ([]*note.NoteWithTags, error)
 	Update(id int, content string, title string) error
 	Delete(id int) error
 	Search(term string) ([]*note.Note, error)
 	CheckByID(id int) error
+	Patch(id int, title string) error
 
 	// Tag operations
 	AddTagToNote(noteID, tagID int) error
-	RemoveTagFromNote(noteID, tagID int) error
+	RemoveTagFromNote(noteID int) error
 	GetNotesByTag(tagID int) ([]*note.Note, error)
 	GetTagsByNote(noteID int) ([]*tag.Tag, error)
 
@@ -94,7 +95,7 @@ func (r *repository) CheckByID(id int) error {
 	return nil
 }
 
-func (r *repository) GetAll(isAsc bool, tagID int) ([]*note.Note, error) {
+func (r *repository) GetAll(isAsc bool, tagID int) ([]*note.NoteWithTags, error) {
 
 	orderBy := "DESC"
 
@@ -105,14 +106,19 @@ func (r *repository) GetAll(isAsc bool, tagID int) ([]*note.Note, error) {
 	args := []any{}
 
 	query := `
-		SELECT n.id, n.title, n.content, n.created_at, n.updated_at
-		FROM notes n `
+		SELECT n.id, n.title, n.content, n.created_at, n.updated_at, GROUP_CONCAT(t.name) AS tags
+		FROM notes n
+		LEFT JOIN notes_tags nt ON n.id = nt.note_id
+		LEFT JOIN tags t ON nt.tag_id = t.id
+		`
 
 
 	if tagID != 0 {
-		query += ` INNER JOIN notes_tags nt ON n.id = nt.note_id WHERE nt.tag_id = ?`
+		query += `WHERE nt.tag_id = ?`
 		args = append(args, tagID)
 	}
+
+	query += ` GROUP BY n.id`
 
 	query += ` ORDER BY n.created_at ` + orderBy
 
@@ -122,10 +128,10 @@ func (r *repository) GetAll(isAsc bool, tagID int) ([]*note.Note, error) {
 	}
 	defer db.Close()
 
-	var notes []*note.Note
+	var notes []*note.NoteWithTags
 	for db.Next() {
-		note := &note.Note{}
-		err := db.Scan(&note.ID, &note.Title, &note.Content, &note.CreatedAt, &note.UpdatedAt)
+		note := &note.NoteWithTags{}
+		err := db.Scan(&note.ID, &note.Title, &note.Content, &note.CreatedAt, &note.UpdatedAt, &note.Tags)
 		if err != nil {
 			return nil, err
 		}
@@ -140,7 +146,7 @@ func (r *repository) Update(id int, content string, title string) error {
 	var args []any
 
 	query = `
-        UPDATE notes 
+        UPDATE notes
         SET content = ?, updated_at = ?
     `
 	args = []any{content, time.Now()}
@@ -196,11 +202,12 @@ func (r *repository) AddTagToNote(noteID, tagID int) error {
 	return err
 }
 
-func (r *repository) RemoveTagFromNote(noteID, tagID int) error {
-	query := `DELETE FROM notes_tags WHERE note_id = ? AND tag_id = ?`
-	_, err := r.db.Exec(query, noteID, tagID)
+func (r *repository) RemoveTagFromNote(noteID int) error {
+	query := `DELETE FROM notes_tags WHERE note_id = ?`
+	_, err := r.db.Exec(query, noteID)
 	return err
 }
+
 
 func (r *repository) GetNotesByTag(tagID int) ([]*note.Note, error) {
 	query := `
@@ -256,4 +263,14 @@ func (r *repository) GetTagsByNote(noteID int) ([]*tag.Tag, error) {
 	}
 
 	return tags, nil
+}
+
+func (r *repository) Patch(id int, title string) error {
+	query := `UPDATE notes SET title = ? WHERE id = ?`
+	_, err := r.db.Exec(query, title, id)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
