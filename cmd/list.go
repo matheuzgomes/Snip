@@ -38,7 +38,8 @@ Examples:
   snip ls                      # Same as above (alias)
   snip list --asc              # Show oldest notes first
   snip list -v                 # Show detailed note information
-  snip list --asc --verbose    # Oldest first with full details`,
+  snip list --asc --verbose    # Oldest first with full details
+  snip list --tag "tag"        # List notes by tag`,
 	Run: func(cmd *cobra.Command, args []string) {
 		validator := validation.NewValidator()
 		if err := executeWithHandler(func(h handler.Handler) error {

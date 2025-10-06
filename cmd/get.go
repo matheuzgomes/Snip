@@ -16,7 +16,7 @@ var showCmd = &cobra.Command{
 	Short: "Display the content of a specific note by ID",
 	Long: `Display the full content of a specific note identified by its unique ID.
 
-This command shows the note's title and content in a readable format. Use the verbose
+This command shows the note's title, content and tags in a readable format. Use the verbose
 flag to see additional metadata like creation and modification timestamps.
 
 Flags:

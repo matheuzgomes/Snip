@@ -42,36 +42,36 @@ changelog:
       - "^docs:"
       - "^test:"
 
-# snapcrafts:
-#   - name_template: "{{ .ProjectName }}"
-#     title: Snip
-#     summary: A fast and lightweight note-taking CLI application
-#     description: |
-#       Snip is a terminal-based note management application.
-#       It allows you to create, edit, view, and delete notes quickly and efficiently.
-#       
-#       Features:
-#       - Create notes with interactive editor
-#       - List and search notes
-#       - Update existing notes
-#       - Delete notes
-#       - Fast SQLite-based storage
-#       - Full-text search
-#     grade: stable
-#     confinement: strict
-#     license: MIT
-#     base: core20
-#     apps:
-#       snip:
-#         command: snip
-#         plugs:
-#           - home
-#           - removable-media
-#     plugs:
-#       home:
-#         interface: home
-#       removable-media:
-#         interface: removable-media
+snapcrafts:
+  - name_template: "{{ .ProjectName }}"
+    title: Snip
+    summary: A fast and lightweight note-taking CLI application
+    description: |
+      Snip is a terminal-based note management application.
+      It allows you to create, edit, view, and delete notes quickly and efficiently.
+      
+      Features:
+      - Create notes with interactive editor
+      - List and search notes
+      - Update existing notes
+      - Delete notes
+      - Fast SQLite-based storage
+      - Full-text search
+    grade: stable
+    confinement: strict
+    license: MIT
+    base: core20
+    apps:
+      snip:
+        command: snip
+        plugs:
+          - home
+          - removable-media
+    plugs:
+      home:
+        interface: home
+      removable-media:
+        interface: removable-media
 
 release:
   footer: >-
