@@ -129,8 +129,12 @@ func (h *handler) GetNote(idStr string, verbose bool) error {
 	if err != nil {
 		return fmt.Errorf("failed to fetch note -> %w", err)
 	}
+	tags := ""
+	if note.Tags != nil {
+		tags = *note.Tags
+	}
 
-	fmt.Printf("● #%d  %s\n", note.ID, note.Title)
+	fmt.Printf("● #%d  %s [%s]\n", note.ID, note.Title, tags)
 
 	if note.Content != "" {
 		fmt.Printf("  └─ %s\n", note.Content)

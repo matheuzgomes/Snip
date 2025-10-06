@@ -11,7 +11,7 @@ import (
 
 type NoteRepository interface {
 	Create(note *note.Note) error
-	GetByID(id int) (*note.Note, error)
+	GetByID(id int) (*note.NoteWithTags, error)
 	GetAll(isAsc bool, tagID int) ([]*note.NoteWithTags, error)
 	Update(id int, content string, title string) error
 	Delete(id int) error
@@ -22,7 +22,6 @@ type NoteRepository interface {
 	// Tag operations
 	AddTagToNote(noteID, tagID int) error
 	RemoveTagFromNote(noteID int) error
-	GetNotesByTag(tagID int) ([]*note.Note, error)
 	GetTagsByNote(noteID int) ([]*tag.Tag, error)
 
 	Close() error
@@ -60,16 +59,19 @@ func (r *repository) Create(note *note.Note) error {
 	return nil
 }
 
-func (r *repository) GetByID(id int) (*note.Note, error) {
+func (r *repository) GetByID(id int) (*note.NoteWithTags, error) {
 	query := `
-		SELECT id, title, content, created_at, updated_at
-		FROM notes WHERE id = ?
+		SELECT n.id, n.title, n.content, n.created_at, n.updated_at, GROUP_CONCAT(t.name) AS tags
+		FROM notes n
+		LEFT JOIN notes_tags nt ON n.id = nt.note_id
+		LEFT JOIN tags t ON nt.tag_id = t.id
+		WHERE n.id = ?
 	`
 
-	note := &note.Note{}
+	note := &note.NoteWithTags{}
 
 	err := r.db.QueryRow(query, id).Scan(
-		&note.ID, &note.Title, &note.Content, &note.CreatedAt, &note.UpdatedAt,
+		&note.ID, &note.Title, &note.Content, &note.CreatedAt, &note.UpdatedAt, &note.Tags,
 	)
 
 	if err != nil {
@@ -172,8 +174,8 @@ func (r *repository) Delete(id int) error {
 
 func (r *repository) Search(term string) ([]*note.Note, error) {
 	query := `
-		SELECT id, title, content
-		FROM notes_fts 
+		SELECT n.id, n.title, n.content
+		FROM notes_fts n
 		WHERE notes_fts MATCH ?
 	`
 
@@ -206,35 +208,6 @@ func (r *repository) RemoveTagFromNote(noteID int) error {
 	query := `DELETE FROM notes_tags WHERE note_id = ?`
 	_, err := r.db.Exec(query, noteID)
 	return err
-}
-
-
-func (r *repository) GetNotesByTag(tagID int) ([]*note.Note, error) {
-	query := `
-		SELECT n.id, n.title, n.content, n.created_at, n.updated_at
-		FROM notes n
-		INNER JOIN notes_tags nt ON n.id = nt.note_id
-		WHERE nt.tag_id = ?
-		ORDER BY n.created_at DESC
-	`
-
-	rows, err := r.db.Query(query, tagID)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-
-	var notes []*note.Note
-	for rows.Next() {
-		note := &note.Note{}
-		err := rows.Scan(&note.ID, &note.Title, &note.Content, &note.CreatedAt, &note.UpdatedAt)
-		if err != nil {
-			return nil, err
-		}
-		notes = append(notes, note)
-	}
-
-	return notes, nil
 }
 
 func (r *repository) GetTagsByNote(noteID int) ([]*tag.Tag, error) {
