@@ -7,9 +7,15 @@ version: 2
 
 project_name: snip
 
+env:
+  - SNAP="/snap/snapcraft/15950"
+  - SNAP_NAME="snapcraft"
+  - SNAP_VERSION="15950"
+
 before:
   hooks:  
     - go mod tidy
+    - chmod -R u+rwx dist || true
 
 builds:
   - env:
@@ -61,10 +67,6 @@ snapcrafts:
     confinement: strict
     license: MIT
     base: core20
-    environment:
-      snap: SNAP="/snap/snapcraft/15950"
-      SNAP_NAME: "snapcraft"
-      SNAP_VERSION: "15950"
     apps:
       snip:
         command: snip
