@@ -61,6 +61,10 @@ snapcrafts:
     confinement: strict
     license: MIT
     base: core20
+    environment:
+      snap: SNAP="/snap/snapcraft/15950"
+      SNAP_NAME: "snapcraft"
+      SNAP_VERSION: "15950"
     apps:
       snip:
         command: snip
