@@ -6,14 +6,7 @@
             "bin": [
                 "snip.exe"
             ],
-            "hash": "2aef8abecfdbdaeed2fa95230482699fc57392f60a4f5dbac1f96293bc4bcae2"
-        },
-        "arm64": {
-            "url": "https://github.com/matheuzgomes/Snip/releases/download/v0.2.1/snip_Windows_arm64.zip",
-            "bin": [
-                "snip.exe"
-            ],
-            "hash": "10c76fbb2faa2e0014472f08fb61f7f4f95a98fec30aef23000f6032fc6ac33e"
+            "hash": "1b354cb1487c534f213def2392a151b7d375715fb5826d9318c4d2c9253d682a"
         }
     },
     "homepage": "https://github.com/matheuzgomes/Snip",
