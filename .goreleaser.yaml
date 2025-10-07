@@ -95,6 +95,19 @@ winget:
       name: Snip
       branch: master
 
+scoops:
+  - name: snip
+    url_template: "https://github.com/matheuzgomes/Snip/releases/download/{{ .Tag }}/{{ .ArtifactName }}"
+    homepage: "https://github.com/matheuzgomes/Snip"
+    description: "A fast and lightweight note-taking CLI application"
+    license: "MIT"
+    persist:
+      - ".snip"
+    repository:
+      owner: matheuzgomes
+      name: Snip
+      branch: master
+
 
 release:
   footer: >-
