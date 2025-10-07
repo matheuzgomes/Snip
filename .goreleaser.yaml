@@ -67,8 +67,8 @@ homebrew_casks:
     homepage: "https://github.com/matheuzgomes/Snip"
     description: "A fast and lightweight note-taking CLI application"
     repository:
-      owner: snip
-      name: snip
+      owner: matheuzgomes
+      name: Snip
       branch: master
     caveats: |
       Data files are stored in ~/.snip/
@@ -81,7 +81,7 @@ winget:
     license: "MIT"
     publisher_url: "https://github.com/matheuzgomes/Snip"
     publisher_support_url: "https://github.com/matheuzgomes/Snip/issues/new"
-    package_identifier: "SnipTeam.Snip"
+    package_identifier: "Marinho.Snip"
     homepage: "https://github.com/matheuzgomes/Snip"
     description: "Snip is a terminal-based note management application that allows you to create, edit, view, and delete notes quickly and efficiently."
     license_url: "https://github.com/matheuzgomes/Snip/blob/master/LICENSE"
@@ -92,8 +92,8 @@ winget:
       - productivity
       - terminal
     repository:
-      owner: snip
-      name: snip
+      owner: matheuzgomes
+      name: Snip
       branch: master
 
 
