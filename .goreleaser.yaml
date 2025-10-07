@@ -63,13 +63,13 @@ homebrew_casks:
   - name: snip
     binary: snip
     url:
-      template: "https://github.com/snip/snip/releases/download/{{ .Tag }}/{{ .ArtifactName }}"
-    homepage: "https://github.com/snip/snip"
+      template: "https://github.com/matheuzgomes/Snip/releases/download/{{ .Tag }}/{{ .ArtifactName }}"
+    homepage: "https://github.com/matheuzgomes/Snip"
     description: "A fast and lightweight note-taking CLI application"
     repository:
       owner: snip
       name: snip
-      branch: main
+      branch: master
     caveats: |
       Data files are stored in ~/.snip/
       To completely remove all data, run: rm -rf ~/.snip/
@@ -79,12 +79,12 @@ winget:
     publisher: "Marinho"
     short_description: "A fast and lightweight note-taking CLI application"
     license: "MIT"
-    publisher_url: "https://github.com/snip/snip"
-    publisher_support_url: "https://github.com/snip/snip/issues/new"
+    publisher_url: "https://github.com/matheuzgomes/Snip"
+    publisher_support_url: "https://github.com/matheuzgomes/Snip/issues/new"
     package_identifier: "SnipTeam.Snip"
-    homepage: "https://github.com/snip/snip"
+    homepage: "https://github.com/matheuzgomes/Snip"
     description: "Snip is a terminal-based note management application that allows you to create, edit, view, and delete notes quickly and efficiently."
-    license_url: "https://github.com/snip/snip/blob/main/LICENSE"
+    license_url: "https://github.com/matheuzgomes/Snip/blob/master/LICENSE"
     copyright: "Marinho"
     tags:
       - cli
@@ -94,7 +94,7 @@ winget:
     repository:
       owner: snip
       name: snip
-      branch: main
+      branch: master
 
 
 release:
