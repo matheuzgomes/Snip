@@ -14,11 +14,11 @@ cask "snip" do
   on_linux do
     on_intel do
       url "https://github.com/matheuzgomes/Snip/releases/download/v#{version}/snip_Linux_x86_64.tar.gz"
-      sha256 "a5c48e7f50798e36377ba34a437a27fe7694cd2479251b557082a315ffb194d6"
+      sha256 "228d74c4dc3c846ffcefb8642242aaee8f0f432cde03fb4409013e827e377973"
     end
     on_arm do
       url "https://github.com/matheuzgomes/Snip/releases/download/v#{version}/snip_Linux_arm64.tar.gz"
-      sha256 "b35f52f19e0d855426514020cdc1eab20c58faf8cae6701c724a7edb6fb5c31e"
+      sha256 "bf036108e09ec746415100c9833cb4a191e6f7164768fe0a81c82ca938d72cbf"
     end
   end
 
