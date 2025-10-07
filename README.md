@@ -1,4 +1,4 @@
-![Go](https://img.shields.io/badge/Go-00ADD8?style=for-the-badge&logo=go&logoColor=white) ![SQLite](https://img.shields.io/badge/SQLite-003B57?style=for-the-badge&logo=sqlite&logoColor=white) ![License](https://img.shields.io/badge/license-MIT-green?style=for-the-badge) ![Version](https://img.shields.io/badge/version-0.1.1-blue?style=for-the-badge) ![GitHub stars](https://img.shields.io/github/stars/matheuzgomes/snip?style=for-the-badge&label=Stars)
+![Go](https://img.shields.io/badge/Go-00ADD8?style=for-the-badge&logo=go&logoColor=white) ![SQLite](https://img.shields.io/badge/SQLite-003B57?style=for-the-badge&logo=sqlite&logoColor=white) ![License](https://img.shields.io/badge/license-MIT-green?style=for-the-badge) ![Version](https://img.shields.io/badge/version-0.2.2-blue?style=for-the-badge) ![GitHub stars](https://img.shields.io/github/stars/matheuzgomes/snip?style=for-the-badge&label=Stars)
 
 
 
@@ -20,6 +20,8 @@ A fast and efficient command-line note-taking tool built with Go. Snip helps you
 - **✏️ Edit Notes**: Update existing notes using your preferred editor
 - **📖 Get Notes**: Retrieve specific notes by ID
 - **🗑️ Delete Notes**: Remove notes you no longer need
+- **🏷️ Tags**: Organize notes with custom tags
+- **✏️ Patch Notes**: Update note titles and manage tags
 - **⚡ Fast Performance**: SQLite database with optimized indexes
 - **🔧 Editor Integration**: Supports nano, vim, vi, or custom `$EDITOR`
 
@@ -52,32 +54,67 @@ snip show 1
 
 # Delete a specific note by ID
 snip delete 1
+
+# Patch/update a note's title
+snip patch 1 --title "New Title"
+
+# Patch/update a note's tags
+snip patch 1 --tag "work important"
+
+# List notes with tags
+snip list --tag "work"
 ```
 
 ## 🚀 Installation
 
+### Package Managers
+
+#### Scoop (Windows)
+```bash
+# Add the bucket
+scoop bucket add snip https://github.com/matheuzgomes/Snip
+
+# Install snip
+scoop install snip
+
+# Update snip
+scoop update snip
+```
+
+#### Homebrew (macOS/Linux)
+```bash
+# Add the tap
+brew tap matheuzgomes/Snip
+
+# Install snip
+brew install snip
+
+# Update snip
+brew upgrade snip
+```
+
+### Direct Download
+
+Pre-compiled binaries are available in the [releases](https://github.com/matheuzgomes/Snip/releases) page for:
+- **Linux**: AMD64 and ARM64
+- **Windows**: AMD64
+
 ### From Source
 
 ```bash
-git clone https://github.com/matheuzgomes/snip.git
-cd snip
+git clone https://github.com/matheuzgomes/Snip.git
+cd Snip
 go build -o snip main.go
 sudo mv snip /usr/local/bin/
 ```
-
-### Using GoReleaser
-
-We're setting up automated releases using [GoReleaser](https://goreleaser.com/) for easy installation:
-
-Linux binaries are available in the [releases](https://github.com/matheuzgomes/snip/releases) page.
-
-Windows and MacOS binaries are coming soon...
 
 ## 🗄️ Data Storage
 
 Snip stores your notes in a SQLite database located at `~/.snip/notes.db`. The database includes:
 
 - **Main Table**: Stores notes with metadata (ID, title, content, timestamps)
+- **Tags Table**: Stores custom tags for organizing notes
+- **Notes-Tags Table**: Many-to-many relationship between notes and tags
 - **FTS Table**: Full-text search index for fast searching
 - **Automatic Triggers**: Keeps search index synchronized with your notes
 
@@ -102,13 +139,14 @@ The database is automatically created at `~/.snip/notes.db`. You can backup your
 ### Prerequisites
 
 - Go 1.21 or later
-- SQLite3 development libraries
+- SQLite3 development libraries (for CGO builds)
+- mingw-w64 (for Windows cross-compilation)
 
 ### Building
 
 ```bash
-git clone https://github.com/yourusername/snip.git
-cd snip
+git clone https://github.com/matheuzgomes/Snip.git
+cd Snip
 go mod download
 go build -o snip main.go
 ```
@@ -121,21 +159,22 @@ In construction...
 
 ### Coming Soon
 
-- ~~**🗑️ Delete Notes**: Remove notes you no longer need~~ Done!
-- **🏷️ Tags**: Organize notes with custom tags
+- ~~**🗑️ Delete Notes**: Remove notes you no longer need~~ ✅ Done!
+- ~~**🏷️ Tags**: Organize notes with custom tags~~ ✅ Done!
+- ~~**✏️ Patch Notes**: Update note titles and manage tags~~ ✅ Done!
 - **📁 Categories**: Group notes into categories
 - **🔗 Note Linking**: Link related notes together
 - **📤 Export**: Export notes to various formats (Markdown, JSON, etc.)
 
 ### Release Automation
 
-We're implementing [GoReleaser](https://goreleaser.com/) for:
+We're using [GoReleaser](https://goreleaser.com/) for:
 
-- **Automated Builds**: Cross-platform binary generation
-- **Release Management**: Automated GitHub releases
-- **Package Distribution**: Homebrew, Snap, and other package managers
-- **Docker Images**: Containerized distribution
-- **Code Signing**: Secure, signed releases
+- ✅ **Automated Builds**: Cross-platform binary generation (Linux AMD64/ARM64, Windows AMD64)
+- ✅ **Release Management**: Automated GitHub releases
+- ✅ **Package Distribution**: Scoop, Homebrew, and Winget package managers
+- ✅ **Cross-compilation**: Windows binaries built with mingw-w64
+- ✅ **CGO Support**: SQLite integration with proper CGO compilation
 
 ## 🙏 Acknowledgments
 
