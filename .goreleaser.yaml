@@ -81,11 +81,10 @@ winget:
     license: "MIT"
     publisher_url: "https://github.com/matheuzgomes/Snip"
     publisher_support_url: "https://github.com/matheuzgomes/Snip/issues/new"
-    package_identifier: "snip"
+    package_identifier: "snip-notes"
     homepage: "https://github.com/matheuzgomes/Snip"
     description: "Snip is a terminal-based note management application that allows you to create, edit, view, and delete notes quickly and efficiently."
     license_url: "https://github.com/matheuzgomes/Snip/blob/master/LICENSE"
-    copyright: "Marinho"
     tags:
       - cli
       - notes
