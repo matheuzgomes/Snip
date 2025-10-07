@@ -1,0 +1,25 @@
+{
+    "version": "0.2.1",
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/matheuzgomes/Snip/releases/download/v0.2.1/snip_Windows_x86_64.zip",
+            "bin": [
+                "snip.exe"
+            ],
+            "hash": "2aef8abecfdbdaeed2fa95230482699fc57392f60a4f5dbac1f96293bc4bcae2"
+        },
+        "arm64": {
+            "url": "https://github.com/matheuzgomes/Snip/releases/download/v0.2.1/snip_Windows_arm64.zip",
+            "bin": [
+                "snip.exe"
+            ],
+            "hash": "10c76fbb2faa2e0014472f08fb61f7f4f95a98fec30aef23000f6032fc6ac33e"
+        }
+    },
+    "homepage": "https://github.com/matheuzgomes/Snip",
+    "license": "MIT",
+    "description": "A fast and lightweight note-taking CLI application",
+    "persist": [
+        ".snip"
+    ]
+}
