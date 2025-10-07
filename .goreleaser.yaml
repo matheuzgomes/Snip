@@ -17,10 +17,21 @@ before:
     - go mod tidy
 
 builds:
-  - env:
+  - id: snip-linux
+    env:
       - CGO_ENABLED=1
     goos:
       - linux
+    goarch:
+      - amd64
+      - arm64
+    ldflags:
+      - -s -w -X main.version={{.Version}} -X main.commit={{.Commit}} -X main.date={{.Date}}
+  - id: snip-windows
+    env:
+      - CGO_ENABLED=0
+    goos:
+      - windows
     goarch:
       - amd64
       - arm64
@@ -47,36 +58,44 @@ changelog:
       - "^docs:"
       - "^test:"
 
-snapcrafts:
-  - name_template: "{{ .ProjectName }}"
-    title: Snip
-    summary: A fast and lightweight note-taking CLI application
-    description: |
-      Snip is a terminal-based note management application.
-      It allows you to create, edit, view, and delete notes quickly and efficiently.
-      
-      Features:
-      - Create notes with interactive editor
-      - List and search notes
-      - Update existing notes
-      - Delete notes
-      - Fast SQLite-based storage
-      - Full-text search
-    grade: stable
-    confinement: strict
-    license: MIT
-    base: core20
-    apps:
-      snip:
-        command: snip
-        plugs:
-          - home
-          - removable-media
-    plugs:
-      home:
-        interface: home
-      removable-media:
-        interface: removable-media
+
+homebrew_casks:
+  - name: snip
+    binary: snip
+    url:
+      template: "https://github.com/snip/snip/releases/download/{{ .Tag }}/{{ .ArtifactName }}"
+    homepage: "https://github.com/snip/snip"
+    description: "A fast and lightweight note-taking CLI application"
+    repository:
+      owner: snip
+      name: snip
+      branch: main
+    caveats: |
+      Data files are stored in ~/.snip/
+      To completely remove all data, run: rm -rf ~/.snip/
+
+winget:
+  - name: snip
+    publisher: "Marinho"
+    short_description: "A fast and lightweight note-taking CLI application"
+    license: "MIT"
+    publisher_url: "https://github.com/snip/snip"
+    publisher_support_url: "https://github.com/snip/snip/issues/new"
+    package_identifier: "SnipTeam.Snip"
+    homepage: "https://github.com/snip/snip"
+    description: "Snip is a terminal-based note management application that allows you to create, edit, view, and delete notes quickly and efficiently."
+    license_url: "https://github.com/snip/snip/blob/main/LICENSE"
+    copyright: "Marinho"
+    tags:
+      - cli
+      - notes
+      - productivity
+      - terminal
+    repository:
+      owner: snip
+      name: snip
+      branch: main
+
 
 release:
   footer: >-
