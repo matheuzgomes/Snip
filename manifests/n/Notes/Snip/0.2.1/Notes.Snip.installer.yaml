@@ -12,7 +12,7 @@ Installers:
       - RelativeFilePath: snip.exe
         PortableCommandAlias: snip
     InstallerUrl: https://github.com/matheuzgomes/Snip/releases/download/v0.2.1/snip_Windows_arm64.zip
-    InstallerSha256: fd5eaad74757646e6c2fb1bc42b3c71c8026dbfdc85fb6735e109af2953aeb80
+    InstallerSha256: 10c76fbb2faa2e0014472f08fb61f7f4f95a98fec30aef23000f6032fc6ac33e
     UpgradeBehavior: uninstallPrevious
   - Architecture: x64
     NestedInstallerType: portable
@@ -20,7 +20,7 @@ Installers:
       - RelativeFilePath: snip.exe
         PortableCommandAlias: snip
     InstallerUrl: https://github.com/matheuzgomes/Snip/releases/download/v0.2.1/snip_Windows_x86_64.zip
-    InstallerSha256: 5a25cf96e416c9b5e45c30474038f8385de70bb89c73535e5509ab53ef4955a8
+    InstallerSha256: 2aef8abecfdbdaeed2fa95230482699fc57392f60a4f5dbac1f96293bc4bcae2
     UpgradeBehavior: uninstallPrevious
 ManifestType: installer
 ManifestVersion: 1.10.0
