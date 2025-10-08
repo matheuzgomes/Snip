@@ -3,7 +3,7 @@ cask "snip" do
   name "snip"
   desc "A fast and lightweight note-taking CLI application"
   homepage "https://github.com/matheuzgomes/Snip"
-  version "0.2.2"
+  version "0.2.1"
 
   livecheck do
     skip "Auto-generated on release."
@@ -14,11 +14,11 @@ cask "snip" do
   on_linux do
     on_intel do
       url "https://github.com/matheuzgomes/Snip/releases/download/v#{version}/snip_Linux_x86_64.tar.gz"
-      sha256 "ec32e5259a92965d65cd34109de265938aef918ddd9ab512494dfd026f91cc5d"
+      sha256 "69de5d4274b88d019baea8d5201aeeb65e69c5a57f97dbf9eabb41075bbee5f9"
     end
     on_arm do
       url "https://github.com/matheuzgomes/Snip/releases/download/v#{version}/snip_Linux_arm64.tar.gz"
-      sha256 "a5da02fed4da019c1b322db59ab142b00bc4bb3cb89f3634e9fd8f4fa5a882c7"
+      sha256 "39f89fb91f6081258c970f699f6da51218a7efda26a0cffa57d7edc30adf5eda"
     end
   end
 
