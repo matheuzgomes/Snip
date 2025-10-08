@@ -12,7 +12,7 @@ Installers:
       - RelativeFilePath: snip.exe
         PortableCommandAlias: snip
     InstallerUrl: https://github.com/matheuzgomes/Snip/releases/download/v0.2.1/snip_Windows_x86_64.zip
-    InstallerSha256: e216176a160c9cd1d068d5f87b0677f49d8111bdad1ab9ab304006f7bc0ffd40
+    InstallerSha256: 0bd9631b1576216e8004d3906fde35c8ae4930b1154eb6cd9899861a813f320a
     UpgradeBehavior: uninstallPrevious
 ManifestType: installer
 ManifestVersion: 1.10.0
