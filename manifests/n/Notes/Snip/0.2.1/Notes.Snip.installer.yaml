@@ -4,7 +4,7 @@ PackageIdentifier: Notes.Snip
 PackageVersion: 0.2.1
 InstallerLocale: en-US
 InstallerType: zip
-ReleaseDate: "2025-10-06"
+ReleaseDate: "2025-10-08"
 Installers:
   - Architecture: x64
     NestedInstallerType: portable
@@ -12,7 +12,7 @@ Installers:
       - RelativeFilePath: snip.exe
         PortableCommandAlias: snip
     InstallerUrl: https://github.com/matheuzgomes/Snip/releases/download/v0.2.1/snip_Windows_x86_64.zip
-    InstallerSha256: 1b354cb1487c534f213def2392a151b7d375715fb5826d9318c4d2c9253d682a
+    InstallerSha256: e216176a160c9cd1d068d5f87b0677f49d8111bdad1ab9ab304006f7bc0ffd40
     UpgradeBehavior: uninstallPrevious
 ManifestType: installer
 ManifestVersion: 1.10.0
