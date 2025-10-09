@@ -68,8 +68,8 @@ homebrew_casks:
     description: "A fast and lightweight note-taking CLI application"
     repository:
       owner: matheuzgomes
-      name: Snip
-      branch: master
+      name: homebrew-Snip
+      branch: main
     caveats: |
       Data files are stored in ~/.snip/
       To completely remove all data, run: rm -rf ~/.snip/
