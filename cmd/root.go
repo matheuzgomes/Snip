@@ -21,4 +21,5 @@ func init() {
 	rootCmd.AddCommand(updateCmd)
 	rootCmd.AddCommand(patchCmd)
 	rootCmd.AddCommand(deleteCmd)
+	rootCmd.AddCommand(editorCmd)
 }

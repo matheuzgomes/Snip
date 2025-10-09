@@ -3,7 +3,7 @@
 
 
 
-<div align="left" style="margin-bottom: 15px; display: flex; align-items: flex-start; margin-left: -20px;">
+<div align="left" style="margin-bottom: 15px; display: flex; align-items: flex-start; **margin**-left: -20px;">
   <img src="assets/snip_logo.png" alt="Snip Logo" width="120" height="130" style="margin-right: 15px; border-radius: 16px; border: 2px solid #e0e0e0;">
   <h1 style="margin: 0; margin-top: 3px;">Snip</h1>
 </div>
@@ -63,6 +63,9 @@ snip patch 1 --tag "work important"
 
 # List notes with tags
 snip list --tag "work"
+
+# Show editor information and available options
+snip editor
 ```
 
 ## 🚀 Installation
@@ -122,13 +125,27 @@ Snip stores your notes in a SQLite database located at `~/.snip/notes.db`. The d
 
 ### Editor Selection
 
-Snip automatically detects your preferred editor in this order:
+Snip automatically detects your preferred editor with cross-platform support:
 
+**Windows:**
+- Visual Studio Code, Notepad++, Sublime Text, Atom, Micro, Nano, Vim, Notepad
+
+**macOS:**
+- Visual Studio Code, Sublime Text, Atom, Nano, Vim, Vi, Open
+
+**Linux:**
+- Nano, Vim, Vi, Micro, Visual Studio Code
+
+**Priority Order:**
 1. `$EDITOR` environment variable
-2. `nano` (if available)
-3. `vim` (if available)
-4. `vi` (fallback)
-5. more to come... :)
+2. Platform-specific editor detection
+3. Smart fallback to basic editors
+
+
+**Check Available Editors:**
+```bash
+snip editor
+```
 
 ### Database Location
 

@@ -4,17 +4,20 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
+	"runtime"
 )
 
 type EditorHandler struct {
+	detectedEditor string
 }
 
 func NewEditorHandler() *EditorHandler {
-	return &EditorHandler{}
+	return &EditorHandler{
+		detectedEditor: detectEditor(),
+	}
 }
 
 func (e *EditorHandler) HandleEditor(content string) (*os.File, error) {
-
 	tempFile, err := e.CreateTempFile()
 	if err != nil {
 		return nil, err
@@ -22,13 +25,13 @@ func (e *EditorHandler) HandleEditor(content string) (*os.File, error) {
 
 	if content != "" {
 		if _, err := tempFile.WriteString(content); err != nil {
-				return nil, fmt.Errorf("failed to write content to temp file: %w", err)
-			}
-			tempFile.Close()
+			return nil, fmt.Errorf("failed to write content to temp file: %w", err)
+		}
+		tempFile.Close()
 	}
 
-	editor := e.GetEditor()
-	cmd := exec.Command(editor, tempFile.Name())
+	editor, args := e.GetEditor()
+	cmd := exec.Command(editor, append(args, tempFile.Name())...)
 	cmd.Stdin = os.Stdin
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stdout
@@ -40,18 +43,104 @@ func (e *EditorHandler) HandleEditor(content string) (*os.File, error) {
 	return tempFile, nil
 }
 
-
-func (e *EditorHandler) GetEditor() string {
+func detectEditor() string {
 	if editor := os.Getenv("EDITOR"); editor != "" {
 		return editor
 	}
-	if _, err := exec.LookPath("nano"); err == nil {
-		return "nano"
+
+	switch runtime.GOOS {
+	case "windows":
+		return detectWindowsEditor()
+	case "darwin":
+		return detectMacEditor()
+	default:
+		return detectUnixEditor()
 	}
-	if _, err := exec.LookPath("vim"); err == nil {
-		return "vim"
+}
+
+func detectWindowsEditor() string {
+	editors := []string{
+		"code",      // Visual Studio Code
+		"notepad++", // Notepad++
+		"subl",      // Sublime Text
+		"atom",      // Atom
+		"micro",     // Micro editor
+		"nano",      // Nano (via WSL/Chocolatey)
+		"vim",       // Vim (via Git Bash/Chocolatey)
+		"notepad",   // Windows Notepad (fallback)
 	}
+
+	for _, editor := range editors {
+		if isEditorAvailable(editor) {
+			return editor
+		}
+	}
+
+	return "notepad"
+}
+
+func detectMacEditor() string {
+	editors := []string{
+		"code", // Visual Studio Code
+		"subl", // Sublime Text
+		"atom", // Atom
+		"nano", // Nano
+		"vim",  // Vim
+		"vi",   // Vi
+		"open", // macOS open command
+	}
+
+	for _, editor := range editors {
+		if isEditorAvailable(editor) {
+			return editor
+		}
+	}
+
 	return "vi"
+}
+
+func detectUnixEditor() string {
+	editors := []string{
+		"nano",  // Nano
+		"vim",   // Vim
+		"vi",    // Vi
+		"micro", // Micro editor
+		"code",  // Visual Studio Code
+	}
+
+	for _, editor := range editors {
+		if isEditorAvailable(editor) {
+			return editor
+		}
+	}
+
+	return "vi"
+}
+
+func isEditorAvailable(editor string) bool {
+	if editor == "notepad" && runtime.GOOS == "windows" {
+		return true
+	}
+
+	_, err := exec.LookPath(editor)
+	return err == nil
+}
+
+func (e *EditorHandler) GetEditor() (string, []string) {
+	editor := e.detectedEditor
+
+	switch editor {
+	case "code":
+		return "code", []string{"--wait"}
+	case "subl":
+		return "subl", []string{"--wait"}
+	case "atom":
+		return "atom", []string{"--wait"}
+	case "open":
+		return "open", []string{"-t"}
+	default:
+		return editor, []string{}
+	}
 }
 
 func (e *EditorHandler) CreateTempFile() (*os.File, error) {
@@ -72,4 +161,31 @@ func (e *EditorHandler) ReadTempFile(tempFile *os.File) (string, error) {
 
 func (e *EditorHandler) RemoveTempFile(tempFile *os.File) error {
 	return os.Remove(tempFile.Name())
+}
+
+func (e *EditorHandler) GetDetectedEditor() string {
+	return e.detectedEditor
+}
+
+
+func ListAvailableEditors() []string {
+	var editors []string
+
+	switch runtime.GOOS {
+	case "windows":
+		editors = []string{"code", "notepad++", "subl", "atom", "micro", "nano", "vim", "notepad"}
+	case "darwin":
+		editors = []string{"code", "subl", "atom", "nano", "vim", "vi", "open"}
+	default:
+		editors = []string{"nano", "vim", "vi", "micro", "code"}
+	}
+
+	var available []string
+	for _, editor := range editors {
+		if isEditorAvailable(editor) {
+			available = append(available, editor)
+		}
+	}
+
+	return available
 }

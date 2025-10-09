@@ -45,7 +45,7 @@ func (h *handler) CreateNote(title string, message *string, tag *string) error {
 		return err
 	}
 
-	contentStr, err := CheckMessage(message, h)
+	contentStr, err := HandleMessage(message, h)
 	if err != nil {
 		return err
 	}
@@ -254,7 +254,7 @@ func (h *handler) DeleteNote(idStr string) error {
 	return nil
 }
 
-func CheckMessage(message *string, h *handler) (string, error) {
+func HandleMessage(message *string, h *handler) (string, error) {
 	if message != nil && *message != "" {
 		return *message, nil
 	}
