@@ -90,7 +90,7 @@ scoop update snip
 brew tap matheuzgomes/Snip
 
 # Install snip
-brew install snip
+brew install --cask snip-notes
 
 # Update snip
 brew upgrade snip

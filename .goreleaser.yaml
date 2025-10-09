@@ -60,7 +60,7 @@ changelog:
 
 
 homebrew_casks:
-  - name: snip
+  - name: snip-notes
     binary: snip
     url:
       template: "https://github.com/matheuzgomes/Snip/releases/download/{{ .Tag }}/{{ .ArtifactName }}"
