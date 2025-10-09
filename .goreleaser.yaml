@@ -68,7 +68,7 @@ homebrew_casks:
     description: "A fast and lightweight note-taking CLI application"
     repository:
       owner: matheuzgomes
-      name: homebrew-Snip
+      name: Snip
       branch: master
     caveats: |
       Data files are stored in ~/.snip/
