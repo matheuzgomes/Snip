@@ -87,7 +87,7 @@ scoop update snip
 #### Homebrew (macOS/Linux)
 ```bash
 # Add the tap
-brew tap matheuzgomes/Snip
+brew tap matheuzgomes/homebrew-Snip
 
 # Install snip
 brew install --cask snip-notes
