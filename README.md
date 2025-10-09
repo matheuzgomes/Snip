@@ -93,7 +93,7 @@ brew tap matheuzgomes/homebrew-Snip
 brew install --cask snip-notes
 
 # Update snip
-brew upgrade snip
+brew upgrade --cask snip-notes
 ```
 
 ### Direct Download
