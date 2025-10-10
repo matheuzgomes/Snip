@@ -70,4 +70,4 @@ jobs:
       - name: Run GoReleaser (macOS only)
         run: goreleaser release --clean --config=.goreleaser-darwin.yaml
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GORELEASER_TOKEN }}
