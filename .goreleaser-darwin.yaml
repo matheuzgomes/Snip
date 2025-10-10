@@ -33,6 +33,9 @@ archives:
       {{- else }}{{ .Arch }}{{ end }}
       {{- if .Arm }}v{{ .Arm }}{{ end }}
 
+checksum:
+  name_template: 'snip_{{ .Version }}_checksums_darwin.txt'
+
 changelog:
   sort: asc
   filters:
