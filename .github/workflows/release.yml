@@ -23,7 +23,7 @@ jobs:
         run: go install github.com/goreleaser/goreleaser/v2@v2.11.1
 
       - name: Run GoReleaser (Linux only)
-        run: goreleaser release --clean --skip=publish
+        run: goreleaser release --clean --skip=publish --filter=goos=linux
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -44,7 +44,7 @@ jobs:
         run: go install github.com/goreleaser/goreleaser/v2@v2.11.1
 
       - name: Run GoReleaser (Windows only)
-        run: goreleaser release --clean --skip=publish
+        run: goreleaser release --clean --skip=publish --filter=goos=windows
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -65,7 +65,7 @@ jobs:
         run: go install github.com/goreleaser/goreleaser/v2@v2.11.1
 
       - name: Run GoReleaser (macOS only)
-        run: goreleaser release --clean --skip=publish
+        run: goreleaser release --clean --skip=publish --filter=goos=darwin
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
