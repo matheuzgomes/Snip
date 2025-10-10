@@ -87,6 +87,6 @@ jobs:
         run: go install github.com/goreleaser/goreleaser/v2@v2.11.1
 
       - name: Publish Release
-        run: goreleaser release --clean --skip=build,archive,checksums,homebrew_casks,winget,scoops
+        run: goreleaser release --clean --skip=archive,checksums,homebrew,winget,scoop
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
