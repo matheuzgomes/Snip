@@ -26,7 +26,6 @@ builds:
       - amd64
     ldflags:
       - -s -w -X main.version={{.Version}} -X main.commit={{.Commit}} -X main.date={{.Date}}
-    skip: "{{if ne .Env.RUNNER_OS \"Linux\"}}true{{end}}"
   - id: snip-windows
     env:
       - CGO_ENABLED=1
@@ -36,7 +35,6 @@ builds:
       - amd64
     ldflags:
       - -s -w -X main.version={{.Version}} -X main.commit={{.Commit}} -X main.date={{.Date}}
-    skip: "{{if ne .Env.RUNNER_OS \"Windows\"}}true{{end}}"
   - id: snip-darwin
     env:
       - CGO_ENABLED=1
@@ -47,7 +45,6 @@ builds:
       - arm64
     ldflags:
       - -s -w -X main.version={{.Version}} -X main.commit={{.Commit}} -X main.date={{.Date}}
-    skip: "{{if ne .Env.RUNNER_OS \"macOS\"}}true{{end}}"
 
 archives:
   - formats: [tar.gz]
@@ -68,57 +65,6 @@ changelog:
     exclude:
       - "^docs:"
       - "^test:"
-
-
-homebrew_casks:
-  - name: snip-notes
-    binary: snip
-    url:
-      template: "https://github.com/matheuzgomes/Snip/releases/download/{{ .Tag }}/{{ .ArtifactName }}"
-    homepage: "https://github.com/matheuzgomes/Snip"
-    description: "A fast and lightweight note-taking CLI application"
-    repository:
-      owner: matheuzgomes
-      name: homebrew-Snip
-      branch: main
-    caveats: |
-      Data files are stored in ~/.snip/
-      To completely remove all data, run: rm -rf ~/.snip/
-
-winget:
-  - name: snip
-    publisher: "Notes"
-    short_description: "A fast and lightweight note-taking CLI application"
-    license: "MIT"
-    publisher_url: "https://github.com/matheuzgomes/Snip"
-    publisher_support_url: "https://github.com/matheuzgomes/Snip/issues/new"
-    package_identifier: "Notes.Snip"
-    homepage: "https://github.com/matheuzgomes/Snip"
-    description: "Snip is a terminal-based note management application that allows you to create, edit, view, and delete notes quickly and efficiently."
-    license_url: "https://github.com/matheuzgomes/Snip/blob/master/LICENSE"
-    tags:
-      - cli
-      - notes
-      - productivity
-      - terminal
-    repository:
-      owner: matheuzgomes
-      name: Snip
-      branch: master
-
-scoops:
-  - name: snip
-    url_template: "https://github.com/matheuzgomes/Snip/releases/download/{{ .Tag }}/{{ .ArtifactName }}"
-    homepage: "https://github.com/matheuzgomes/Snip"
-    description: "A fast and lightweight note-taking CLI application"
-    license: "MIT"
-    persist:
-      - ".snip"
-    repository:
-      owner: matheuzgomes
-      name: Snip
-      branch: master
-
 
 release:
   footer: >-
