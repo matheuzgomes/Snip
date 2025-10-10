@@ -27,16 +27,28 @@ builds:
       - arm64
     ldflags:
       - -s -w -X main.version={{.Version}} -X main.commit={{.Commit}} -X main.date={{.Date}}
+    skip: "{{if ne .Env.RUNNER_OS \"Linux\"}}true{{end}}"
   - id: snip-windows
     env:
       - CGO_ENABLED=1
-      - CC=x86_64-w64-mingw32-gcc
     goos:
       - windows
     goarch:
       - amd64
     ldflags:
       - -s -w -X main.version={{.Version}} -X main.commit={{.Commit}} -X main.date={{.Date}}
+    skip: "{{if ne .Env.RUNNER_OS \"Windows\"}}true{{end}}"
+  - id: snip-darwin
+    env:
+      - CGO_ENABLED=1
+    goos:
+      - darwin
+    goarch:
+      - amd64
+      - arm64
+    ldflags:
+      - -s -w -X main.version={{.Version}} -X main.commit={{.Commit}} -X main.date={{.Date}}
+    skip: "{{if ne .Env.RUNNER_OS \"macOS\"}}true{{end}}"
 
 archives:
   - formats: [tar.gz]
