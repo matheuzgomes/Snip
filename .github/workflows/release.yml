@@ -6,9 +6,14 @@ on:
       - 'v*'
 
 jobs:
-  setup-goreleaser:
+  goreleaser-linux:
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
       - name: Set up Go
         uses: actions/setup-go@v4
         with:
@@ -17,36 +22,12 @@ jobs:
       - name: Install GoReleaser
         run: go install github.com/goreleaser/goreleaser/v2@v2.11.1
 
-      - name: Upload GoReleaser binary
-        uses: actions/upload-artifact@v4
-        with:
-          name: goreleaser-binary
-          path: ~/go/bin/goreleaser
-          retention-days: 1
-  goreleaser-linux:
-    needs: setup-goreleaser
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Download GoReleaser binary
-        uses: actions/download-artifact@v4
-        with:
-          name: goreleaser-binary
-
-      - name: Make GoReleaser executable
-        run: chmod +x goreleaser
-
       - name: Run GoReleaser (Linux only)
-        run: ./goreleaser release --clean --skip=publish --config=.goreleaser-linux.yaml
+        run: goreleaser release --clean --skip=publish --config=.goreleaser-linux.yaml
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   goreleaser-windows:
-    needs: setup-goreleaser
     runs-on: windows-latest
     steps:
       - name: Checkout
@@ -54,10 +35,13 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Download GoReleaser binary
-        uses: actions/download-artifact@v4
+      - name: Set up Go
+        uses: actions/setup-go@v4
         with:
-          name: goreleaser-binary
+          go-version: '1.25'
+
+      - name: Install GoReleaser
+        run: go install github.com/goreleaser/goreleaser/v2@v2.11.1
 
       - name: Run GoReleaser (Windows only)
         run: goreleaser release --clean --skip=publish --config=.goreleaser-windows.yaml
@@ -65,7 +49,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   goreleaser-macos:
-    needs: setup-goreleaser
     runs-on: macos-latest
     steps:
       - name: Checkout
@@ -73,16 +56,16 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Download GoReleaser binary
-        uses: actions/download-artifact@v4
+      - name: Set up Go
+        uses: actions/setup-go@v4
         with:
-          name: goreleaser-binary
+          go-version: '1.25'
 
-      - name: Make GoReleaser executable
-        run: chmod +x goreleaser
+      - name: Install GoReleaser
+        run: go install github.com/goreleaser/goreleaser/v2@v2.11.1
 
       - name: Run GoReleaser (macOS only)
-        run: ./goreleaser release --clean --skip=publish --config=.goreleaser-darwin.yaml
+        run: goreleaser release --clean --skip=publish --config=.goreleaser-darwin.yaml
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -95,15 +78,15 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Download GoReleaser binary
-        uses: actions/download-artifact@v4
+      - name: Set up Go
+        uses: actions/setup-go@v4
         with:
-          name: goreleaser-binary
+          go-version: '1.25'
 
-      - name: Make GoReleaser executable
-        run: chmod +x goreleaser
+      - name: Install GoReleaser
+        run: go install github.com/goreleaser/goreleaser/v2@v2.11.1
 
       - name: Publish Release
-        run: ./goreleaser release --clean --skip=archive,homebrew,winget,scoop
+        run: goreleaser release --clean --skip=archive,homebrew,winget,scoop
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
