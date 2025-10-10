@@ -23,10 +23,9 @@ jobs:
           go-version: '1.25'
 
       - name: Install GoReleaser
-        run: |
-          curl -sL https://git.io/goreleaser | bash -s -- -b $GITHUB_WORKSPACE v1.25.0
+        run: go install github.com/goreleaser/goreleaser@v1.25.0
 
       - name: Run GoReleaser
-        run: ./goreleaser release --clean
+        run: goreleaser release --clean
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
