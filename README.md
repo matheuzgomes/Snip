@@ -96,6 +96,18 @@ brew install --cask snip-notes
 brew upgrade --cask snip-notes
 ```
 
+**⚠️ macOS Security Note:**
+
+If macOS blocks the app with "cannot be opened because the developer cannot be verified":
+
+```bash
+# Option 1: Remove quarantine attribute
+xattr -d com.apple.quarantine /opt/homebrew/bin/snip
+
+# Option 2: Allow in System Settings
+# Go to: System Settings > Privacy & Security > Allow "snip"
+```
+
 ### Direct Download
 
 Pre-compiled binaries are available in the [releases](https://github.com/matheuzgomes/Snip/releases) page for:
