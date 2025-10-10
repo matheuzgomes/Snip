@@ -20,10 +20,10 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@v4
         with:
-          go-version: '1.24'
+          go-version: '1.25'
 
       - name: Install GoReleaser
-        run: go install github.com/goreleaser/goreleaser@v1.24.0
+        run: go install github.com/goreleaser/goreleaser@v2.11.1
 
       - name: Run GoReleaser
         run: goreleaser release --clean
