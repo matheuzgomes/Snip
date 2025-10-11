@@ -12,6 +12,8 @@ import (
 	"github.com/snip/internal/validation"
 )
 
+const contentLimit = 50
+
 type Handler interface {
 	CreateNote(title string, message *string, tag *string) error
 	ListNotes(isAsc, verbose bool, tag *string) error
@@ -20,6 +22,7 @@ type Handler interface {
 	UpdateNote(idStr string, title string) error
 	DeleteNote(idStr string) error
 	PatchNote(idStr string, title *string, tag *string) error
+	GetRecentNotes(limit int) error
 }
 
 type handler struct {
@@ -91,7 +94,6 @@ func (h *handler) ListNotes(isAsc, verbose bool, tag *string) error {
 	fmt.Printf("Found %d note(s):\n\n", len(notes))
 
 	writer := bufio.NewWriter(os.Stdout)
-	const contentLimit = 50
 
 	for _, note := range notes {
 		tags := ""
@@ -284,6 +286,39 @@ func (h *handler) AssociateTagsWithNote(tag *string, noteID int) error {
 		if err := h.noteRepo.AddTagToNote(noteID, tagObj.ID); err != nil {
 			return err
 		}
+	}
+
+	return nil
+}
+
+func (h *handler) GetRecentNotes(limit int) error {
+	notes, err := h.noteRepo.GetRecent(limit)
+	if err != nil {
+		return fmt.Errorf("failed to get recent notes: %w", err)
+	}
+
+	if len(notes) == 0 {
+		fmt.Println("No notes found.")
+		return nil
+	}
+
+	fmt.Printf("Found %d note(s):\n\n", len(notes))
+
+	for _, note := range notes {
+
+		if note.Tags == nil {
+			note.Tags = new(string)
+		}
+		fmt.Printf("● #%d  %s [%s]\n", note.ID, note.Title, *note.Tags)
+
+		content := note.Content
+		if len(content) > contentLimit {
+			content = content[:contentLimit] + "..."
+		}
+
+		fmt.Printf("  └─ %s\n", content)
+
+		fmt.Println()
 	}
 
 	return nil

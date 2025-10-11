@@ -18,6 +18,7 @@ type NoteRepository interface {
 	Search(term string) ([]*note.Note, error)
 	CheckByID(id int) error
 	Patch(id int, title string) error
+	GetRecent(limit int) ([]*note.NoteWithTags, error)
 
 	// Tag operations
 	AddTagToNote(noteID, tagID int) error
@@ -246,4 +247,35 @@ func (r *repository) Patch(id int, title string) error {
 	}
 
 	return nil
+}
+
+func (r *repository) GetRecent(limit int) ([]*note.NoteWithTags, error) {
+	query := `
+		SELECT n.id, n.title, n.content, n.created_at, n.updated_at, GROUP_CONCAT(t.name) AS tags
+		FROM notes n
+		LEFT JOIN notes_tags nt ON n.id = nt.note_id
+		LEFT JOIN tags t ON nt.tag_id = t.id
+		GROUP BY n.id
+		ORDER BY n.updated_at DESC
+		LIMIT ?
+	`
+
+	notes := []*note.NoteWithTags{}
+
+	db, err := r.db.Query(query, limit)
+	if err != nil {
+		return nil, err
+	}
+	defer db.Close()
+
+	for db.Next() {
+		note := &note.NoteWithTags{}
+		err := db.Scan(&note.ID, &note.Title, &note.Content, &note.CreatedAt, &note.UpdatedAt, &note.Tags)
+		if err != nil {
+			return nil, err
+		}
+		notes = append(notes, note)
+	}
+
+	return notes, nil
 }

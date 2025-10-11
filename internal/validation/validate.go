@@ -2,6 +2,7 @@ package validation
 
 import (
 	"fmt"
+	"strconv"
 	"strings"
 )
 
@@ -35,4 +36,12 @@ func (v *Validator) CheckString(s string) *string {
 		return nil
 	}
 	return &s
+}
+
+func (v *Validator) CheckInt(s string) int {
+	num, err := strconv.Atoi(s)
+	if err != nil {
+		return 0
+	}
+	return num
 }
