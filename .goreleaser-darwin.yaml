@@ -49,6 +49,12 @@ homebrew_casks:
       owner: matheuzgomes
       name: homebrew-Snip
       branch: main
+    hooks:
+      post:
+        install: |
+          if OS.mac?
+            system_command "/usr/bin/xattr", args: ["-dr", "com.apple.quarantine", "#{staged_path}/snip"]
+          end
     caveats: |
       Data files are stored in ~/.snip/
       To completely remove all data, run: rm -rf ~/.snip/
