@@ -27,10 +27,18 @@ func showEditorInfo() {
 	fmt.Println("┌─ Available Editors:")
 	availableEditors := handler.ListAvailableEditors()
 
-	for _, editor := range availableEditors {
+	for i, editor := range availableEditors {
 		status := "├─"
 		if editor == currentEditor {
 			status = "└─ [CURRENT]"
+
+			if i == 0 {
+				status = "┌─ [CURRENT]"
+			}
+
+			if i != len(availableEditors)-1 {
+				status = "├─ [CURRENT]"
+			}
 		}
 		fmt.Printf("  %s %s\n", status, editor)
 	}
@@ -50,8 +58,4 @@ func showEditorInfo() {
 func getCurrentEditor() string {
 	editorHandler := handler.NewEditorHandler()
 	return editorHandler.GetDetectedEditor()
-}
-
-func init() {
-	rootCmd.AddCommand(editorCmd)
 }
