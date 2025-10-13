@@ -32,10 +32,6 @@ func showEditorInfo() {
 		if editor == currentEditor {
 			status = "└─ [CURRENT]"
 
-			if i == 0 {
-				status = "┌─ [CURRENT]"
-			}
-
 			if i != len(availableEditors)-1 {
 				status = "├─ [CURRENT]"
 			}
