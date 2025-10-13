@@ -1,12 +1,12 @@
 {
-    "version": "0.2.2",
+    "version": "0.3.0",
     "architecture": {
         "64bit": {
-            "url": "https://github.com/matheuzgomes/Snip/releases/download/v0.2.2/snip_Windows_x86_64.zip",
+            "url": "https://github.com/matheuzgomes/Snip/releases/download/v0.3.0/snip_Windows_x86_64.zip",
             "bin": [
                 "snip.exe"
             ],
-            "hash": "e9a3a7ddecd2b56cd11cb6a123d991bcb829852f789409957155eaaa8f63ed2e"
+            "hash": "4bf2156b716748f081bba8ee309d4ac54b9288296b5631f063b611bc16bc1a89"
         }
     },
     "homepage": "https://github.com/matheuzgomes/Snip",
