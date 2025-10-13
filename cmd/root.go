@@ -23,4 +23,6 @@ func init() {
 	rootCmd.AddCommand(deleteCmd)
 	rootCmd.AddCommand(editorCmd)
 	rootCmd.AddCommand(recentCmd)
+	rootCmd.AddCommand(backupCmd)
+	rootCmd.AddCommand(exportCmd)
 }

@@ -4,8 +4,10 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+	"path/filepath"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/snip/internal/note"
 	"github.com/snip/internal/repository"
@@ -23,6 +25,8 @@ type Handler interface {
 	DeleteNote(idStr string) error
 	PatchNote(idStr string, title *string, tag *string) error
 	GetRecentNotes(limit int) error
+	ExportNotesToJson(since string) error
+	BackupDatabase() error
 }
 
 type handler struct {
@@ -75,10 +79,10 @@ func (h *handler) ListNotes(isAsc, verbose bool, tag *string) error {
 
 	if tag != nil && *tag != "" {
 		tagObj, err := h.tagRepo.GetByName(*tag)
-			if err != nil {
-				return fmt.Errorf("no note found for this tag: %s", *tag)
-			}
-			tagID = tagObj.ID
+		if err != nil {
+			return fmt.Errorf("no note found for this tag: %s", *tag)
+		}
+		tagID = tagObj.ID
 	}
 
 	notes, err := h.noteRepo.GetAll(isAsc, tagID)
@@ -96,10 +100,7 @@ func (h *handler) ListNotes(isAsc, verbose bool, tag *string) error {
 	writer := bufio.NewWriter(os.Stdout)
 
 	for _, note := range notes {
-		tags := ""
-		if note.Tags != nil {
-			tags = *note.Tags
-		}
+		tags := strings.Join(note.Tags, ", ")
 		fmt.Fprintf(writer, "● #%d  %s [%s]\n", note.ID, note.Title, tags)
 
 		content := note.Content
@@ -131,10 +132,7 @@ func (h *handler) GetNote(idStr string, verbose bool) error {
 	if err != nil {
 		return fmt.Errorf("failed to fetch note -> %w", err)
 	}
-	tags := ""
-	if note.Tags != nil {
-		tags = *note.Tags
-	}
+	tags := strings.Join(note.Tags, ", ")
 
 	fmt.Printf("● #%d  %s [%s]\n", note.ID, note.Title, tags)
 
@@ -176,7 +174,6 @@ func (h *handler) FindNotes(term string) error {
 	return nil
 }
 
-
 func (h *handler) PatchNote(idStr string, title *string, tag *string) error {
 	id, err := strconv.Atoi(idStr)
 	if err != nil {
@@ -205,7 +202,6 @@ func (h *handler) PatchNote(idStr string, title *string, tag *string) error {
 
 	return nil
 }
-
 
 func (h *handler) UpdateNote(idStr string, title string) error {
 	id, err := strconv.Atoi(idStr)
@@ -280,8 +276,8 @@ func (h *handler) AssociateTagsWithNote(tag *string, noteID int) error {
 	for tag := range strings.SplitSeq(*tag, " ") {
 		tagObj, err := h.tagRepo.GetOrCreate(tag)
 		if err != nil {
-				return err
-			}
+			return err
+		}
 
 		if err := h.noteRepo.AddTagToNote(noteID, tagObj.ID); err != nil {
 			return err
@@ -305,11 +301,8 @@ func (h *handler) GetRecentNotes(limit int) error {
 	fmt.Printf("Found %d note(s):\n\n", len(notes))
 
 	for _, note := range notes {
-
-		if note.Tags == nil {
-			note.Tags = new(string)
-		}
-		fmt.Printf("● #%d  %s [%s]\n", note.ID, note.Title, *note.Tags)
+		tags := strings.Join(note.Tags, ", ")
+		fmt.Printf("● #%d  %s [%s]\n", note.ID, note.Title, tags)
 
 		content := note.Content
 		if len(content) > contentLimit {
@@ -322,4 +315,165 @@ func (h *handler) GetRecentNotes(limit int) error {
 	}
 
 	return nil
+}
+
+func (h *handler) ExportNotesToJson(since string) error {
+	homeDir, err := os.UserHomeDir()
+	if err != nil {
+		return fmt.Errorf("failed to get home directory: %w", err)
+	}
+
+	exportDir := filepath.Join(homeDir, ".snip", "export")
+	if err := os.MkdirAll(exportDir, 0755); err != nil {
+		return fmt.Errorf("failed to create export directory: %w", err)
+	}
+
+	// Parse since filter if provided
+	var sinceTime *time.Time
+	if since != "" {
+		parsed, err := parseSinceFilter(since)
+		if err != nil {
+			return fmt.Errorf("invalid --since value: %w", err)
+		}
+		sinceTime = &parsed
+	}
+
+	timestamp := time.Now().Format("2006-01-02_15-04-05")
+	filename := fmt.Sprintf("notes_%s.json", timestamp)
+	filepath := filepath.Join(exportDir, filename)
+
+	tempFile := filepath + ".tmp"
+	f, err := os.Create(tempFile)
+	if err != nil {
+		return fmt.Errorf("failed to create export file: %w", err)
+	}
+
+	if err := h.noteRepo.ExportNotesToJsonStream(f, sinceTime); err != nil {
+		f.Close()
+		os.Remove(tempFile)
+		return fmt.Errorf("failed to export notes: %w", err)
+	}
+
+	if err := f.Close(); err != nil {
+		os.Remove(tempFile)
+		return fmt.Errorf("failed to close export file: %w", err)
+	}
+
+	if err := os.Rename(tempFile, filepath); err != nil {
+		os.Remove(tempFile)
+		return fmt.Errorf("failed to finalize export: %w", err)
+	}
+
+	if sinceTime != nil {
+		fmt.Printf("✓ Notes exported successfully (since %s)!\n", sinceTime.Format("2006-01-02"))
+	} else {
+		fmt.Printf("✓ Notes exported successfully!\n")
+	}
+	fmt.Printf("  Location: %s\n", filepath)
+	return nil
+}
+
+func (h *handler) BackupDatabase() error {
+	homeDir, err := os.UserHomeDir()
+	if err != nil {
+		return fmt.Errorf("failed to get home directory: %w", err)
+	}
+
+	snipDir := filepath.Join(homeDir, ".snip")
+	sourceDB := filepath.Join(snipDir, "notes.db")
+
+	if _, err := os.Stat(sourceDB); os.IsNotExist(err) {
+		return fmt.Errorf("database not found at %s", sourceDB)
+	}
+
+	backupDir := filepath.Join(snipDir, "backups")
+	if err := os.MkdirAll(backupDir, 0755); err != nil {
+		return fmt.Errorf("failed to create backup directory: %w", err)
+	}
+
+	timestamp := time.Now().Format("2006-01-02_15-04-05")
+	filename := fmt.Sprintf("notes_%s.db", timestamp)
+	destDB := filepath.Join(backupDir, filename)
+
+	tempFile := destDB + ".tmp"
+
+	if err := copyFile(sourceDB, tempFile); err != nil {
+		os.Remove(tempFile)
+		return fmt.Errorf("failed to backup database: %w", err)
+	}
+
+	if err := os.Rename(tempFile, destDB); err != nil {
+		os.Remove(tempFile)
+		return fmt.Errorf("failed to finalize backup: %w", err)
+	}
+
+	fmt.Printf("✓ Database backed up successfully!\n")
+	fmt.Printf("  Location: %s\n", destDB)
+	return nil
+}
+
+func copyFile(src, dst string) error {
+	sourceFile, err := os.Open(src)
+	if err != nil {
+		return err
+	}
+	defer sourceFile.Close()
+
+	destFile, err := os.Create(dst)
+	if err != nil {
+		return err
+	}
+	defer destFile.Close()
+
+	buf := make([]byte, 1024*1024)
+	for {
+		n, readErr := sourceFile.Read(buf)
+		if n > 0 {
+			if _, writeErr := destFile.Write(buf[:n]); writeErr != nil {
+				return writeErr
+			}
+		}
+		if readErr != nil {
+			if readErr.Error() == "EOF" {
+				break
+			}
+			return readErr
+		}
+	}
+
+	return destFile.Sync()
+}
+
+func parseSinceFilter(since string) (time.Time, error) {
+	if t, err := time.Parse("2006-01-02", since); err == nil {
+		return t, nil
+	}
+
+	if len(since) < 2 {
+		return time.Time{}, fmt.Errorf("invalid format: %s (use '2025-01-01' or '30d')", since)
+	}
+
+	unit := since[len(since)-1:]
+	valueStr := since[:len(since)-1]
+
+	var value int
+	if _, err := fmt.Sscanf(valueStr, "%d", &value); err != nil {
+		return time.Time{}, fmt.Errorf("invalid number in duration: %s", since)
+	}
+
+	var duration time.Duration
+	switch unit {
+	case "d":
+		duration = time.Duration(value) * 24 * time.Hour
+	case "w":
+		duration = time.Duration(value) * 7 * 24 * time.Hour
+	case "m":
+		duration = time.Duration(value) * 30 * 24 * time.Hour
+	case "y":
+		duration = time.Duration(value) * 365 * 24 * time.Hour
+	default:
+		return time.Time{}, fmt.Errorf("invalid duration unit: %s (use d, w, m, or y)", unit)
+	}
+
+	return time.Now().Add(-duration), nil
 }

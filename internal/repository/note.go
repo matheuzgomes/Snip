@@ -1,8 +1,12 @@
 package repository
 
 import (
+	"bufio"
 	"database/sql"
+	"encoding/json"
 	"errors"
+	"io"
+	"strings"
 	"time"
 
 	"github.com/snip/internal/note"
@@ -19,6 +23,7 @@ type NoteRepository interface {
 	CheckByID(id int) error
 	Patch(id int, title string) error
 	GetRecent(limit int) ([]*note.NoteWithTags, error)
+	ExportNotesToJsonStream(w io.Writer, since *time.Time) error
 
 	// Tag operations
 	AddTagToNote(noteID, tagID int) error
@@ -70,9 +75,10 @@ func (r *repository) GetByID(id int) (*note.NoteWithTags, error) {
 	`
 
 	note := &note.NoteWithTags{}
+	var tagsStr sql.NullString
 
 	err := r.db.QueryRow(query, id).Scan(
-		&note.ID, &note.Title, &note.Content, &note.CreatedAt, &note.UpdatedAt, &note.Tags,
+		&note.ID, &note.Title, &note.Content, &note.CreatedAt, &note.UpdatedAt, &tagsStr,
 	)
 
 	if err != nil {
@@ -80,6 +86,12 @@ func (r *repository) GetByID(id int) (*note.NoteWithTags, error) {
 			return nil, errors.New("not found")
 		}
 		return nil, err
+	}
+
+	note.Tags = []string{}
+
+	if tagsStr.Valid && tagsStr.String != "" {
+		note.Tags = strings.Split(tagsStr.String, ",")
 	}
 
 	return note, nil
@@ -115,7 +127,6 @@ func (r *repository) GetAll(isAsc bool, tagID int) ([]*note.NoteWithTags, error)
 		LEFT JOIN tags t ON nt.tag_id = t.id
 		`
 
-
 	if tagID != 0 {
 		query += `WHERE nt.tag_id = ?`
 		args = append(args, tagID)
@@ -134,10 +145,18 @@ func (r *repository) GetAll(isAsc bool, tagID int) ([]*note.NoteWithTags, error)
 	var notes []*note.NoteWithTags
 	for db.Next() {
 		note := &note.NoteWithTags{}
-		err := db.Scan(&note.ID, &note.Title, &note.Content, &note.CreatedAt, &note.UpdatedAt, &note.Tags)
+		var tagsStr sql.NullString
+		err := db.Scan(&note.ID, &note.Title, &note.Content, &note.CreatedAt, &note.UpdatedAt, &tagsStr)
 		if err != nil {
 			return nil, err
 		}
+
+		note.Tags = []string{}
+
+		if tagsStr.Valid && tagsStr.String != "" {
+			note.Tags = strings.Split(tagsStr.String, ",")
+		}
+
 		notes = append(notes, note)
 	}
 
@@ -270,12 +289,118 @@ func (r *repository) GetRecent(limit int) ([]*note.NoteWithTags, error) {
 
 	for db.Next() {
 		note := &note.NoteWithTags{}
-		err := db.Scan(&note.ID, &note.Title, &note.Content, &note.CreatedAt, &note.UpdatedAt, &note.Tags)
+		var tagsStr sql.NullString
+		err := db.Scan(&note.ID, &note.Title, &note.Content, &note.CreatedAt, &note.UpdatedAt, &tagsStr)
 		if err != nil {
 			return nil, err
 		}
+
+		note.Tags = []string{}
+
+		if tagsStr.Valid && tagsStr.String != "" {
+			note.Tags = strings.Split(tagsStr.String, ",")
+		}
+
 		notes = append(notes, note)
 	}
 
 	return notes, nil
+}
+
+func (r *repository) ExportNotesToJsonStream(w io.Writer, since *time.Time) error {
+	query := `
+		SELECT 
+			n.id,
+			n.title,
+			n.content,
+			n.created_at,
+			n.updated_at,
+			GROUP_CONCAT(t.name) as tags
+		FROM notes n
+		LEFT JOIN notes_tags nt ON n.id = nt.note_id
+		LEFT JOIN tags t ON nt.tag_id = t.id
+	`
+
+	var args []interface{}
+	if since != nil {
+		query += " WHERE n.created_at >= ?"
+		args = append(args, *since)
+	}
+
+	query += `
+		GROUP BY n.id
+		ORDER BY n.id
+	`
+
+	rows, err := r.db.Query(query, args...)
+	if err != nil {
+		return err
+	}
+	defer rows.Close()
+
+	buf := bufio.NewWriterSize(w, 64*1024)
+	defer buf.Flush()
+
+	if _, err := buf.WriteString("[\n"); err != nil {
+		return err
+	}
+
+	first := true
+	for rows.Next() {
+		var (
+			id        int
+			title     string
+			content   string
+			createdAt time.Time
+			updatedAt time.Time
+			tagsStr   sql.NullString
+		)
+
+		if err := rows.Scan(&id, &title, &content, &createdAt, &updatedAt, &tagsStr); err != nil {
+			return err
+		}
+
+		var tags []string
+		if tagsStr.Valid && tagsStr.String != "" {
+			tags = strings.Split(tagsStr.String, ",")
+		}
+
+		exportNote := note.NoteWithTags{
+			ID:        id,
+			Title:     title,
+			Content:   content,
+			Tags:      tags,
+			CreatedAt: createdAt,
+			UpdatedAt: updatedAt,
+		}
+
+		if !first {
+			if _, err := buf.WriteString(",\n"); err != nil {
+				return err
+			}
+		}
+		first = false
+
+		jsonBytes, err := json.MarshalIndent(exportNote, "  ", "  ")
+		if err != nil {
+			return err
+		}
+
+		if _, err := buf.WriteString("  "); err != nil {
+			return err
+		}
+		if _, err := buf.Write(jsonBytes); err != nil {
+			return err
+		}
+	}
+
+	if _, err := buf.WriteString("\n]\n"); err != nil {
+		return err
+	}
+
+	if err := rows.Err(); err != nil {
+		return err
+	}
+
+	return buf.Flush()
 }
