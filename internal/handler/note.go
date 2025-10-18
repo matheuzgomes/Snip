@@ -25,7 +25,7 @@ type Handler interface {
 	DeleteNote(idStr string) error
 	PatchNote(idStr string, title *string, tag *string) error
 	GetRecentNotes(limit int) error
-	ExportNotesToJson(since string) error
+	ExportNotes(since string, format string) error
 	BackupDatabase() error
 }
 
@@ -317,7 +317,7 @@ func (h *handler) GetRecentNotes(limit int) error {
 	return nil
 }
 
-func (h *handler) ExportNotesToJson(since string) error {
+func (h *handler) ExportNotes(since string, format string) error {
 	homeDir, err := os.UserHomeDir()
 	if err != nil {
 		return fmt.Errorf("failed to get home directory: %w", err)
@@ -328,7 +328,6 @@ func (h *handler) ExportNotesToJson(since string) error {
 		return fmt.Errorf("failed to create export directory: %w", err)
 	}
 
-	// Parse since filter if provided
 	var sinceTime *time.Time
 	if since != "" {
 		parsed, err := parseSinceFilter(since)
@@ -338,30 +337,8 @@ func (h *handler) ExportNotesToJson(since string) error {
 		sinceTime = &parsed
 	}
 
-	timestamp := time.Now().Format("2006-01-02_15-04-05")
-	filename := fmt.Sprintf("notes_%s.json", timestamp)
-	filepath := filepath.Join(exportDir, filename)
-
-	tempFile := filepath + ".tmp"
-	f, err := os.Create(tempFile)
-	if err != nil {
-		return fmt.Errorf("failed to create export file: %w", err)
-	}
-
-	if err := h.noteRepo.ExportNotesToJsonStream(f, sinceTime); err != nil {
-		f.Close()
-		os.Remove(tempFile)
+	if err := h.noteRepo.ExportNotes(exportDir, sinceTime, format); err != nil {
 		return fmt.Errorf("failed to export notes: %w", err)
-	}
-
-	if err := f.Close(); err != nil {
-		os.Remove(tempFile)
-		return fmt.Errorf("failed to close export file: %w", err)
-	}
-
-	if err := os.Rename(tempFile, filepath); err != nil {
-		os.Remove(tempFile)
-		return fmt.Errorf("failed to finalize export: %w", err)
 	}
 
 	if sinceTime != nil {
@@ -369,7 +346,7 @@ func (h *handler) ExportNotesToJson(since string) error {
 	} else {
 		fmt.Printf("✓ Notes exported successfully!\n")
 	}
-	fmt.Printf("  Location: %s\n", filepath)
+	fmt.Printf("  Location: %s\n", exportDir)
 	return nil
 }
 

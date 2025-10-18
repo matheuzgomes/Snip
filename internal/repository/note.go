@@ -1,11 +1,12 @@
 package repository
 
 import (
-	"bufio"
 	"database/sql"
 	"encoding/json"
 	"errors"
-	"io"
+	"fmt"
+	"os"
+	"path/filepath"
 	"strings"
 	"time"
 
@@ -23,7 +24,7 @@ type NoteRepository interface {
 	CheckByID(id int) error
 	Patch(id int, title string) error
 	GetRecent(limit int) ([]*note.NoteWithTags, error)
-	ExportNotesToJsonStream(w io.Writer, since *time.Time) error
+	ExportNotes(exportDir string, since *time.Time, format string) error
 
 	// Tag operations
 	AddTagToNote(noteID, tagID int) error
@@ -307,7 +308,7 @@ func (r *repository) GetRecent(limit int) ([]*note.NoteWithTags, error) {
 	return notes, nil
 }
 
-func (r *repository) ExportNotesToJsonStream(w io.Writer, since *time.Time) error {
+func (r *repository) ExportNotes(exportDir string, since *time.Time, format string) error {
 	query := `
 		SELECT 
 			n.id,
@@ -321,7 +322,7 @@ func (r *repository) ExportNotesToJsonStream(w io.Writer, since *time.Time) erro
 		LEFT JOIN tags t ON nt.tag_id = t.id
 	`
 
-	var args []interface{}
+	var args []any
 	if since != nil {
 		query += " WHERE n.created_at >= ?"
 		args = append(args, *since)
@@ -338,14 +339,6 @@ func (r *repository) ExportNotesToJsonStream(w io.Writer, since *time.Time) erro
 	}
 	defer rows.Close()
 
-	buf := bufio.NewWriterSize(w, 64*1024)
-	defer buf.Flush()
-
-	if _, err := buf.WriteString("[\n"); err != nil {
-		return err
-	}
-
-	first := true
 	for rows.Next() {
 		var (
 			id        int
@@ -374,33 +367,79 @@ func (r *repository) ExportNotesToJsonStream(w io.Writer, since *time.Time) erro
 			UpdatedAt: updatedAt,
 		}
 
-		if !first {
-			if _, err := buf.WriteString(",\n"); err != nil {
-				return err
-			}
+		switch format {
+			case "json":
+				if err := writeJsonNotesToFile(exportNote, exportDir); err != nil {
+					return err
+				}
+			case "markdown":
+				if err := writeMarkdownNotesToFile(exportNote, exportDir); err != nil {
+					return err
+				}
+			default:
+				return fmt.Errorf("invalid format: %s", format)
 		}
-		first = false
 
-		jsonBytes, err := json.MarshalIndent(exportNote, "  ", "  ")
-		if err != nil {
-			return err
-		}
-
-		if _, err := buf.WriteString("  "); err != nil {
-			return err
-		}
-		if _, err := buf.Write(jsonBytes); err != nil {
-			return err
-		}
+		fmt.Printf("✓ Note %d exported successfully!\n", id)
 	}
 
-	if _, err := buf.WriteString("\n]\n"); err != nil {
+	return rows.Err()
+}
+
+func writeJsonNotesToFile(note note.NoteWithTags, exportDir string) error {
+	filename := fmt.Sprintf("%d_%s.json", note.ID, sanitizeFilename(note.Title))
+	filepath := filepath.Join(exportDir, filename)
+
+	f, err := os.Create(filepath)
+	if err != nil {
+		return err
+	}
+	defer f.Close()
+
+	jsonBytes, err := json.MarshalIndent(note, "", "  ")
+	if err != nil {
 		return err
 	}
 
-	if err := rows.Err(); err != nil {
+	_, err = f.Write(jsonBytes)
+	return err
+}
+
+func writeMarkdownNotesToFile(note note.NoteWithTags, exportDir string) error {
+	filename := fmt.Sprintf("%d_%s.md", note.ID, sanitizeFilename(note.Title))
+	filepath := filepath.Join(exportDir, filename)
+	f, err := os.Create(filepath)
+	if err != nil {
 		return err
 	}
+	defer f.Close()
 
-	return buf.Flush()
+	fmt.Fprintf(f, "# %s\n\n", note.Title)
+	fmt.Fprintf(f, "%s\n\n", note.Content)
+	if len(note.Tags) > 0 {
+		fmt.Fprintf(f, "**Tags:** %s\n", strings.Join(note.Tags, ", "))
+	}
+	fmt.Fprintf(f, "**Created:** %s\n", note.CreatedAt.Format("2006-01-02 15:04:05"))
+	fmt.Fprintf(f, "**Updated:** %s\n", note.UpdatedAt.Format("2006-01-02 15:04:05"))
+	fmt.Fprintf(f, "\n---\n\n")
+	return nil
+}
+
+func sanitizeFilename(title string) string {
+	title = strings.ReplaceAll(title, "/", "_")
+	title = strings.ReplaceAll(title, "\\", "_")
+	title = strings.ReplaceAll(title, ":", "_")
+	title = strings.ReplaceAll(title, "*", "_")
+	title = strings.ReplaceAll(title, "?", "_")
+	title = strings.ReplaceAll(title, "\"", "_")
+	title = strings.ReplaceAll(title, "<", "_")
+	title = strings.ReplaceAll(title, ">", "_")
+	title = strings.ReplaceAll(title, "|", "_")
+	title = strings.ReplaceAll(title, " ", "_")
+
+	if len(title) > 50 {
+		title = title[:50]
+	}
+
+	return strings.TrimSpace(title)
 }

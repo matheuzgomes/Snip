@@ -8,9 +8,11 @@ import (
 )
 
 var exportSince string
+var exportFormat string
 
 func init() {
 	exportCmd.Flags().StringVarP(&exportSince, "since", "s", "", "Export notes created since date or duration (e.g., '2025-01-01' or '30d')")
+	exportCmd.Flags().StringVarP(&exportFormat, "format", "f", "json", "Export format (json or markdown)")
 }
 
 var exportCmd = &cobra.Command{
@@ -32,15 +34,17 @@ Export is recommended when you need to:
 Flags:
   --since, -s    Export only notes created since a specific date or duration
                  Examples: "2025-01-01", "30d", "7d", "1y"
-
+  --format, -f    Export format (json or markdown)
 Examples:
   snip export                      # Export all notes
   snip export --since 30d          # Export notes from last 30 days
   snip export --since "2025-01-01" # Export notes since Jan 1, 2025
-  snip export -s 7d                # Export notes from last week`,
+  snip export -s 7d                # Export notes from last week
+  snip export --format markdown    # Export notes in markdown format
+  snip export -f json              # Export notes in json format`,
 	Run: func(cmd *cobra.Command, args []string) {
 		if err := executeWithHandler(func(h handler.Handler) error {
-			return h.ExportNotesToJson(exportSince)
+			return h.ExportNotes(exportSince, exportFormat)
 		}); err != nil {
 			fmt.Printf("Error: %v\n", err)
 		}
