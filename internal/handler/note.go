@@ -27,6 +27,7 @@ type Handler interface {
 	GetRecentNotes(limit int) error
 	ExportNotes(since string, format string) error
 	BackupDatabase() error
+	ImportNotes(importDir string) error
 }
 
 type handler struct {
@@ -386,6 +387,47 @@ func (h *handler) BackupDatabase() error {
 
 	fmt.Printf("✓ Database backed up successfully!\n")
 	fmt.Printf("  Location: %s\n", destDB)
+	return nil
+}
+
+//Only import markdown files for now, ill add support for other files later dont kill me for this
+func (h *handler) ImportNotes(importDir string) error {
+	fmt.Printf("Importing notes from %s\n", importDir)
+
+	homeDir, err := os.UserHomeDir()
+	if err != nil {
+		return fmt.Errorf("failed to get home directory: %w", err)
+	}
+
+	importDir = filepath.Join(homeDir, importDir)
+	files, err := os.ReadDir(importDir)
+	if err != nil {
+		return fmt.Errorf("failed to read import directory: %w", err)
+	}
+
+	fmt.Printf("Found %d files to import\n", len(files))
+
+	for _, file := range files {
+		fmt.Printf("Importing file: %s\n", file.Name())
+		if file.IsDir() {
+			continue
+		}
+
+		if filepath.Ext(file.Name()) != ".md" {
+			continue
+		}
+
+		content, err := os.ReadFile(filepath.Join(importDir, file.Name()))
+		if err != nil {
+			return fmt.Errorf("failed to read file: %w", err)
+		}
+
+		note := note.NewNote(strings.TrimSuffix(file.Name(), ".md"), string(content))
+		if err := h.noteRepo.Create(note); err != nil {
+			return fmt.Errorf("failed to create note: %w", err)
+		}
+	}
+
 	return nil
 }
 

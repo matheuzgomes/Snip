@@ -25,4 +25,5 @@ func init() {
 	rootCmd.AddCommand(recentCmd)
 	rootCmd.AddCommand(backupCmd)
 	rootCmd.AddCommand(exportCmd)
+	rootCmd.AddCommand(importCmd)
 }
