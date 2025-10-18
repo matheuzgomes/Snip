@@ -168,7 +168,7 @@ func (e *EditorHandler) GetDetectedEditor() string {
 }
 
 
-func ListAvailableEditors() []string {
+func (e *EditorHandler) ListAvailableEditors() []string {
 	var editors []string
 
 	switch runtime.GOOS {
@@ -188,4 +188,35 @@ func ListAvailableEditors() []string {
 	}
 
 	return available
+}
+
+
+func (e *EditorHandler) ShowEditorInfo() {
+	currentEditor := e.GetDetectedEditor()
+	fmt.Printf("┌─┐ Platform: %s\n", runtime.GOOS)
+	fmt.Printf("└─┘ Current Editor: %s\n\n", currentEditor)
+
+	fmt.Println("┌─ Available Editors:")
+	availableEditors := e.ListAvailableEditors()
+
+	for _, editor := range availableEditors {
+		status := "├─"
+
+		if editor == currentEditor {
+			status = "├─ [CURRENT]"
+		}
+
+		fmt.Printf("  %s %s\n", status, editor)
+	}
+
+	fmt.Println("\n┌─ Configuration:")
+	fmt.Println("├─ Set EDITOR environment variable to override")
+
+	switch runtime.GOOS {
+	case "windows":
+		fmt.Println("├─ Windows: set EDITOR=code")
+		fmt.Println("└─ PowerShell: $env:EDITOR='code'")
+	default:
+		fmt.Println("├─ Linux/macOS: export EDITOR=code")
+	}
 }

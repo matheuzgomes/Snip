@@ -1,9 +1,6 @@
 package cmd
 
 import (
-	"fmt"
-	"runtime"
-
 	"github.com/snip/internal/handler"
 	"github.com/spf13/cobra"
 )
@@ -15,43 +12,7 @@ var editorCmd = &cobra.Command{
 
 This command helps you understand which editor Snip will use for editing notes and shows alternatives you can configure.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		showEditorInfo()
+		editorHandler := handler.NewEditorHandler()
+		editorHandler.ShowEditorInfo()
 	},
-}
-
-func showEditorInfo() {
-	currentEditor := getCurrentEditor()
-	fmt.Printf("┌─┐ Platform: %s\n", runtime.GOOS)
-	fmt.Printf("└─┘ Current Editor: %s\n\n", currentEditor)
-
-	fmt.Println("┌─ Available Editors:")
-	availableEditors := handler.ListAvailableEditors()
-
-	for i, editor := range availableEditors {
-		status := "├─"
-		if editor == currentEditor {
-			status = "└─ [CURRENT]"
-
-			if i != len(availableEditors)-1 {
-				status = "├─ [CURRENT]"
-			}
-		}
-		fmt.Printf("  %s %s\n", status, editor)
-	}
-
-	fmt.Println("\n┌─ Configuration:")
-	fmt.Println("├─ Set EDITOR environment variable to override")
-
-	switch runtime.GOOS {
-	case "windows":
-		fmt.Println("├─ Windows: set EDITOR=code")
-		fmt.Println("└─ PowerShell: $env:EDITOR='code'")
-	default:
-		fmt.Println("├─ Linux/macOS: export EDITOR=code")
-	}
-}
-
-func getCurrentEditor() string {
-	editorHandler := handler.NewEditorHandler()
-	return editorHandler.GetDetectedEditor()
 }
