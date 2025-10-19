@@ -26,6 +26,7 @@ jobs:
         run: make test
 
   goreleaser-linux:
+    needs: test
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -47,6 +48,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   goreleaser-windows:
+    needs: test
     runs-on: windows-latest
     steps:
       - name: Checkout
@@ -68,6 +70,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GORELEASER_TOKEN }}
 
   goreleaser-macos:
+    needs: test
     runs-on: macos-latest
     steps:
       - name: Checkout
