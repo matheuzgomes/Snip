@@ -12,9 +12,12 @@ import (
 	"github.com/snip/internal/note"
 	"github.com/snip/internal/repository"
 	"github.com/snip/internal/validation"
+
+	"github.com/mitchellh/go-wordwrap"
 )
 
-const contentLimit = 50
+const lineLimit = 62
+const rowsLimit = 4
 
 type Handler interface {
 	CreateNote(title string, message *string, tag *string) error
@@ -102,14 +105,24 @@ func (h *handler) ListNotes(isAsc, verbose bool, tag *string) error {
 
 	for _, note := range notes {
 		tags := strings.Join(note.Tags, ", ")
-		fmt.Fprintf(writer, "● #%d  %s [%s]\n", note.ID, note.Title, tags)
+		fmt.Fprintf(writer, "● #%d %s [%s]\n", note.ID, note.Title, tags)
 
-		content := note.Content
-		if len(content) > contentLimit {
-			content = content[:contentLimit] + "..."
+		lines := strings.Split(strings.TrimRight(wordwrap.WrapString(note.Content, lineLimit), "\n"), "\n")
+
+		if len(lines) > rowsLimit {
+			lines = lines[:rowsLimit]
+			lines[rowsLimit - 1] = "..."
 		}
-
-		fmt.Fprintf(writer, "  └─ %s\n", content)
+		
+		fmt.Fprintf(writer, "   └── ")
+		
+		for i, line := range lines {
+			if i != 0 {
+				fmt.Fprintf(writer, "       %s\n", line)
+			} else if i == 0 {
+				fmt.Fprintf(writer, "%s\n", line)
+			}
+		}
 
 		if verbose {
 			fmt.Fprintf(writer, "  └─ Created: %s\n", note.CreatedAt.Format(h.dateFormat))
@@ -135,10 +148,19 @@ func (h *handler) GetNote(idStr string, verbose bool) error {
 	}
 	tags := strings.Join(note.Tags, ", ")
 
-	fmt.Printf("● #%d  %s [%s]\n", note.ID, note.Title, tags)
+	fmt.Printf("● #%d %s [%s]\n", note.ID, note.Title, tags)
 
 	if note.Content != "" {
-		fmt.Printf("  └─ %s\n", note.Content)
+		lines := strings.Split(strings.TrimRight(wordwrap.WrapString(note.Content, lineLimit), "\n"), "\n")
+		fmt.Printf("  └── ")
+	
+		for i, line := range lines {
+			if i != 0 {
+				fmt.Printf("      %s\n", line)
+			} else if i == 0 {
+				fmt.Printf("%s\n", line)
+			}
+		}
 	}
 
 	if verbose {
@@ -163,10 +185,27 @@ func (h *handler) FindNotes(term string) error {
 	fmt.Printf("Found %d note(s) matching '%s':\n\n", len(notes), term)
 
 	for _, note := range notes {
-		fmt.Printf("● #%d  %s\n", note.ID, note.Title)
+		fmt.Printf("● #%d %s\n", note.ID, note.Title)
 
 		if note.Content != "" {
-			fmt.Printf("  └─ %s\n", note.Content)
+			lines := strings.Split(strings.TrimRight(note.Content, "\n"), "\n")
+			if len(lines) > rowsLimit {
+				lines = lines[:rowsLimit]
+				lines[rowsLimit - 1] = "..."
+			}
+
+			fmt.Printf("  └── ")
+
+			for i, line := range lines {
+				if len(line) > lineLimit {
+					line = line[:lineLimit] + "..."
+				}
+				if i != 0 {
+					fmt.Printf("      %s\n", line)
+				} else if i == 0 {
+					fmt.Printf("%s\n", line)
+				}
+			}
 		}
 
 		fmt.Println()
@@ -303,14 +342,23 @@ func (h *handler) GetRecentNotes(limit int) error {
 
 	for _, note := range notes {
 		tags := strings.Join(note.Tags, ", ")
-		fmt.Printf("● #%d  %s [%s]\n", note.ID, note.Title, tags)
+		fmt.Printf("● #%d %s [%s]\n", note.ID, note.Title, tags)
 
-		content := note.Content
-		if len(content) > contentLimit {
-			content = content[:contentLimit] + "..."
+		lines := strings.Split(strings.TrimRight(wordwrap.WrapString(note.Content, lineLimit), "\n"), "\n")
+		if len(lines) > rowsLimit {
+			lines = lines[:rowsLimit]
+			lines[rowsLimit - 1] = "..."
 		}
-
-		fmt.Printf("  └─ %s\n", content)
+		
+		fmt.Printf("  └── ")
+		
+		for i, line := range lines {
+			if i != 0 {
+				fmt.Printf("      %s\n", line)
+			} else if i == 0 {
+				fmt.Printf("%s\n", line)
+			}
+		}
 
 		fmt.Println()
 	}
