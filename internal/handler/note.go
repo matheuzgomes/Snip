@@ -14,15 +14,19 @@ import (
 	"github.com/snip/internal/validation"
 
 	"github.com/mitchellh/go-wordwrap"
+
+	"github.com/MichaelMure/go-term-markdown"
 )
 
 const lineLimit = 62
 const rowsLimit = 4
+const markdownWidth = 100
+const markdownPad = 2
 
 type Handler interface {
 	CreateNote(title string, message *string, tag *string) error
 	ListNotes(isAsc, verbose bool, tag *string) error
-	GetNote(idStr string, verbose bool) error
+	GetNote(idStr string, verbose bool, format bool) error
 	FindNotes(term string) error
 	UpdateNote(idStr string, title string) error
 	DeleteNote(idStr string) error
@@ -136,7 +140,7 @@ func (h *handler) ListNotes(isAsc, verbose bool, tag *string) error {
 	return nil
 }
 
-func (h *handler) GetNote(idStr string, verbose bool) error {
+func (h *handler) GetNote(idStr string, verbose bool, render bool) error {
 	id, err := strconv.Atoi(idStr)
 	if err != nil {
 		return fmt.Errorf("invalid note ID: %s", idStr)
@@ -151,14 +155,18 @@ func (h *handler) GetNote(idStr string, verbose bool) error {
 	fmt.Printf("● #%d %s [%s]\n", note.ID, note.Title, tags)
 
 	if note.Content != "" {
-		lines := strings.Split(strings.TrimRight(wordwrap.WrapString(note.Content, lineLimit), "\n"), "\n")
-		fmt.Printf("  └── ")
-	
-		for i, line := range lines {
-			if i != 0 {
-				fmt.Printf("      %s\n", line)
-			} else if i == 0 {
-				fmt.Printf("%s\n", line)
+		if render {
+			fmt.Println("\n" + renderMarkdownContent(note.Content))
+		} else {
+			lines := strings.Split(strings.TrimRight(wordwrap.WrapString(note.Content, lineLimit), "\n"), "\n")
+			fmt.Printf("  └── ")
+		
+			for i, line := range lines {
+				if i != 0 {
+					fmt.Printf("      %s\n", line)
+				} else if i == 0 {
+					fmt.Printf("%s\n", line)
+				}
 			}
 		}
 	}
@@ -217,7 +225,7 @@ func (h *handler) FindNotes(term string) error {
 func (h *handler) PatchNote(idStr string, title *string, tag *string) error {
 	id, err := strconv.Atoi(idStr)
 	if err != nil {
-		return fmt.Errorf("invalid note ID: %d", id)
+		return fmt.Errorf("invalid note ID: %s", idStr)
 	}
 
 	err = h.noteRepo.CheckByID(id)
@@ -543,4 +551,9 @@ func parseSinceFilter(since string) (time.Time, error) {
 	}
 
 	return time.Now().Add(-duration), nil
+}
+
+
+func renderMarkdownContent(content string) string {
+	return string(markdown.Render(content, markdownWidth, markdownPad))
 }
