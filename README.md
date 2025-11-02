@@ -1,4 +1,4 @@
-![Go](https://img.shields.io/badge/Go-00ADD8?style=for-the-badge&logo=go&logoColor=white) ![SQLite](https://img.shields.io/badge/SQLite-003B57?style=for-the-badge&logo=sqlite&logoColor=white) ![License](https://img.shields.io/badge/license-MIT-green?style=for-the-badge) ![Version](https://img.shields.io/badge/version-1.0.0-blue?style=for-the-badge) ![GitHub stars](https://img.shields.io/github/stars/matheuzgomes/snip?style=for-the-badge&label=Stars)
+****![Go](https://img.shields.io/badge/Go-00ADD8?style=for-the-badge&logo=go&logoColor=white) ![SQLite](https://img.shields.io/badge/SQLite-003B57?style=for-the-badge&logo=sqlite&logoColor=white) ![License](https://img.shields.io/badge/license-MIT-green?style=for-the-badge) ![Version](https://img.shields.io/badge/version-1.1.0-blue?style=for-the-badge) ![GitHub stars](https://img.shields.io/github/stars/matheuzgomes/snip?style=for-the-badge&label=Stars)
 ![Downloads](https://img.shields.io/github/downloads/matheuzgomes/Snip/total?style=for-the-badge&label=Downloads)
 
 
@@ -19,12 +19,13 @@ A fast and efficient command-line note-taking tool built with Go. Snip helps you
 - **📋 List Notes**: View all your notes with chronological sorting options
 - **🔍 Search Notes**: Full-text search across all notes using SQLite FTS4
 - **✏️ Edit Notes**: Update existing notes using your preferred editor
-- **📖 Get Notes**: Retrieve specific notes by ID
+- **📖 Get Notes**: Retrieve specific notes by ID with markdown rendering support
 - **🗑️ Delete Notes**: Remove notes you no longer need
 - **🏷️ Tags**: Organize notes with custom tags
 - **✏️ Patch Notes**: Update note titles and manage tags
 - **📤 Export Notes**: Export notes to JSON and Markdown formats
 - **📥 Import Notes**: Import notes(markdown) from files and directories
+- **🖼️ Markdown Preview**: Render markdown content beautifully in the terminal
 - **⚡ Fast Performance**: SQLite database with optimized indexes (90-127ns operations)
 - **🔧 Editor Integration**: Supports nano, vim, vi, or custom `$EDITOR`
 - **🧪 Comprehensive Testing**: Full test coverage with performance benchmarks
@@ -55,6 +56,9 @@ snip update 1
 
 # Get a specific note by ID
 snip show 1
+
+# Get a note with markdown rendering
+snip show 1 --render
 
 # Delete a specific note by ID
 snip delete 1
@@ -219,11 +223,11 @@ go test -v ./internal/test/...
 - ~~**📤 Export**: Export notes to various formats (Markdown, JSON, etc.)~~ ✅ Done!
 - ~~**📥 Import**: Import notes from files and directories~~ ✅ Done!
 - ~~**🧪 Testing**: Comprehensive test suite with benchmarks~~ ✅ Done!
-- **🖼️ Markdown Preview**: Visualize rendered Markdown so you can see your notes as they'd appear formatted
+- ~~**🖼️ Markdown Preview**: Visualize rendered Markdown so you can see your notes as they'd appear formatted~~ ✅ Done!
 
 ### Performance Metrics
 
-Snip v1.0.0 delivers exceptional performance:
+Snip v1.1.0 delivers exceptional performance:
 
 - **⚡ Sub-microsecond Operations**: Core operations run in 90-127 nanoseconds
 - **💾 Memory Efficient**: Only 56 bytes per operation with 3 allocations
