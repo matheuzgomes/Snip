@@ -79,3 +79,6 @@ local/
 dev/
 
 docs/marketing/
+
+# Demo scripts
+scripts/
