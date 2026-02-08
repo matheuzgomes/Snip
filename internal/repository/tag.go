@@ -5,7 +5,7 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/snip/internal/tag"
+	"github.com/matheuzgomes/Snip/internal/tag"
 )
 
 var ErrTagNotFound = errors.New("tag not found")
@@ -63,7 +63,6 @@ func (r *tagRepository) GetByName(name string) (*tag.Tag, error) {
 
 	return tag, nil
 }
-
 
 func (r *tagRepository) Patch(id int, name string) error {
 	query := `UPDATE tags SET name = ? WHERE id = ?`

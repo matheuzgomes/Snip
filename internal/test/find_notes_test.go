@@ -3,7 +3,7 @@ package test
 import (
 	"testing"
 
-	"github.com/snip/internal/note"
+	"github.com/matheuzgomes/Snip/internal/note"
 )
 
 func TestFindNotes(t *testing.T) {

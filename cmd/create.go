@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/snip/internal/handler"
-	"github.com/snip/internal/validation"
+	"github.com/matheuzgomes/Snip/internal/handler"
+	"github.com/matheuzgomes/Snip/internal/validation"
 	"github.com/spf13/cobra"
 )
 

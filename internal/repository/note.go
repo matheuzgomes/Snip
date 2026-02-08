@@ -10,8 +10,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/snip/internal/note"
-	"github.com/snip/internal/tag"
+	"github.com/matheuzgomes/Snip/internal/note"
+	"github.com/matheuzgomes/Snip/internal/tag"
 )
 
 type NoteRepository interface {
@@ -368,16 +368,16 @@ func (r *repository) ExportNotes(exportDir string, since *time.Time, format stri
 		}
 
 		switch format {
-			case "json":
-				if err := writeJsonNotesToFile(exportNote, exportDir); err != nil {
-					return err
-				}
-			case "markdown":
-				if err := writeMarkdownNotesToFile(exportNote, exportDir); err != nil {
-					return err
-				}
-			default:
-				return fmt.Errorf("invalid format: %s", format)
+		case "json":
+			if err := writeJsonNotesToFile(exportNote, exportDir); err != nil {
+				return err
+			}
+		case "markdown":
+			if err := writeMarkdownNotesToFile(exportNote, exportDir); err != nil {
+				return err
+			}
+		default:
+			return fmt.Errorf("invalid format: %s", format)
 		}
 
 		fmt.Printf("✓ Note %d exported successfully!\n", id)

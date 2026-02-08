@@ -4,15 +4,15 @@ import (
 	"fmt"
 	"sync"
 
-	"github.com/snip/internal/database"
-	"github.com/snip/internal/handler"
-	"github.com/snip/internal/repository"
+	"github.com/matheuzgomes/Snip/internal/database"
+	"github.com/matheuzgomes/Snip/internal/handler"
+	"github.com/matheuzgomes/Snip/internal/repository"
 )
 
 var (
 	globalNoteRepo repository.NoteRepository
-	globalTagRepo repository.TagRepository
-	repoOnce   sync.Once
+	globalTagRepo  repository.TagRepository
+	repoOnce       sync.Once
 )
 
 func getRepository() (repository.NoteRepository, repository.TagRepository, error) {

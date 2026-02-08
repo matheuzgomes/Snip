@@ -1,4 +1,4 @@
-module github.com/snip
+module github.com/matheuzgomes/Snip
 
 go 1.25.1
 

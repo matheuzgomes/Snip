@@ -9,13 +9,13 @@ import (
 	"strings"
 	"time"
 
-	"github.com/snip/internal/note"
-	"github.com/snip/internal/repository"
-	"github.com/snip/internal/validation"
+	"github.com/matheuzgomes/Snip/internal/note"
+	"github.com/matheuzgomes/Snip/internal/repository"
+	"github.com/matheuzgomes/Snip/internal/validation"
 
 	"github.com/mitchellh/go-wordwrap"
 
-	"github.com/MichaelMure/go-term-markdown"
+	markdown "github.com/MichaelMure/go-term-markdown"
 )
 
 const lineLimit = 62
@@ -115,11 +115,11 @@ func (h *handler) ListNotes(isAsc, verbose bool, tag *string) error {
 
 		if len(lines) > rowsLimit {
 			lines = lines[:rowsLimit]
-			lines[rowsLimit - 1] = "..."
+			lines[rowsLimit-1] = "..."
 		}
-		
+
 		fmt.Fprintf(writer, "   └── ")
-		
+
 		for i, line := range lines {
 			if i != 0 {
 				fmt.Fprintf(writer, "       %s\n", line)
@@ -160,7 +160,7 @@ func (h *handler) GetNote(idStr string, verbose bool, render bool) error {
 		} else {
 			lines := strings.Split(strings.TrimRight(wordwrap.WrapString(note.Content, lineLimit), "\n"), "\n")
 			fmt.Printf("  └── ")
-		
+
 			for i, line := range lines {
 				if i != 0 {
 					fmt.Printf("      %s\n", line)
@@ -199,7 +199,7 @@ func (h *handler) FindNotes(term string) error {
 			lines := strings.Split(strings.TrimRight(note.Content, "\n"), "\n")
 			if len(lines) > rowsLimit {
 				lines = lines[:rowsLimit]
-				lines[rowsLimit - 1] = "..."
+				lines[rowsLimit-1] = "..."
 			}
 
 			fmt.Printf("  └── ")
@@ -355,11 +355,11 @@ func (h *handler) GetRecentNotes(limit int) error {
 		lines := strings.Split(strings.TrimRight(wordwrap.WrapString(note.Content, lineLimit), "\n"), "\n")
 		if len(lines) > rowsLimit {
 			lines = lines[:rowsLimit]
-			lines[rowsLimit - 1] = "..."
+			lines[rowsLimit-1] = "..."
 		}
-		
+
 		fmt.Printf("  └── ")
-		
+
 		for i, line := range lines {
 			if i != 0 {
 				fmt.Printf("      %s\n", line)
@@ -446,7 +446,7 @@ func (h *handler) BackupDatabase() error {
 	return nil
 }
 
-//Only import markdown files for now, ill add support for other files later dont kill me for this
+// Only import markdown files for now, ill add support for other files later dont kill me for this
 func (h *handler) ImportNotes(importDir string) error {
 	fmt.Printf("Importing notes from %s\n", importDir)
 
@@ -552,7 +552,6 @@ func parseSinceFilter(since string) (time.Time, error) {
 
 	return time.Now().Add(-duration), nil
 }
-
 
 func renderMarkdownContent(content string) string {
 	return string(markdown.Render(content, markdownWidth, markdownPad))

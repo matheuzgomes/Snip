@@ -6,9 +6,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/snip/internal/handler"
-	"github.com/snip/internal/note"
-	"github.com/snip/internal/tag"
+	"github.com/matheuzgomes/Snip/internal/handler"
+	"github.com/matheuzgomes/Snip/internal/note"
+	"github.com/matheuzgomes/Snip/internal/tag"
 )
 
 type mockNoteRepository struct {

@@ -4,7 +4,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/snip/internal/note"
+	"github.com/matheuzgomes/Snip/internal/note"
 )
 
 func TestGetRecentNotes(t *testing.T) {
