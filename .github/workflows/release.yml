@@ -45,7 +45,7 @@ jobs:
       - name: Run GoReleaser (Linux only)
         run: goreleaser release --clean --config=.goreleaser-linux.yaml
         env:
-          GORELEASER_TOKEN: ${{ secrets.GORELEASER_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GORELEASER_TOKEN }}
 
   goreleaser-windows:
     needs: build
@@ -67,7 +67,7 @@ jobs:
       - name: Run GoReleaser (Windows only)
         run: goreleaser release --clean --config=.goreleaser-windows.yaml
         env:
-          GORELEASER_TOKEN: ${{ secrets.GORELEASER_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GORELEASER_TOKEN }}
 
   goreleaser-macos:
     needs: build
@@ -89,4 +89,4 @@ jobs:
       - name: Run GoReleaser (macOS only)
         run: goreleaser release --clean --config=.goreleaser-darwin.yaml
         env:
-          GORELEASER_TOKEN: ${{ secrets.GORELEASER_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GORELEASER_TOKEN }}
