@@ -42,20 +42,23 @@ changelog:
       - "^docs:"
       - "^test:"
 
-homebrew_casks:
-  - name: snip-notes
-    binary: snip
-    url:
-      template: "https://github.com/matheuzgomes/Snip/releases/download/{{ .Tag }}/{{ .ArtifactName }}"
-    homepage: "https://github.com/matheuzgomes/Snip"
-    description: "A fast and lightweight note-taking CLI application"
-    repository:
-      owner: matheuzgomes
-      name: homebrew-Snip
-      branch: main
-    caveats: |
-      Data files are stored in ~/.snip/
-      To completely remove all data, run: rm -rf ~/.snip/
+npms:
+    name: "@snip/snip-notes"
+    description: A fast and lightweight note-taking CLI application
+    homepage: https://snip-notes.vercel.app/
+    keywords:
+      - cli
+      - golang
+      - notes
+      - productivity
+    license: MIT
+    author: Marinho matheus.gomes196@gmail.com
+    repository: https://github.com/matheuzgomes/Snip
+    bugs: https://github.com/matheuzgomes/Snip/issues
+    access: public
+    tag: latest
+    format: tar.gz
+    url_template: "https://github.com/matheuzgomes/Snip/releases/download/{{ .Tag }}/{{ .ArtifactName }}"
 
 release:
   footer: >-
