@@ -9,7 +9,7 @@ permissions:
   contents: write
 
 jobs:
-  test:
+  build:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -26,7 +26,7 @@ jobs:
         run: make test
 
   goreleaser-linux:
-    needs: test
+    needs: build
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -45,10 +45,10 @@ jobs:
       - name: Run GoReleaser (Linux only)
         run: goreleaser release --clean --config=.goreleaser-linux.yaml
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GORELEASER_TOKEN: ${{ secrets.GORELEASER_TOKEN }}
 
   goreleaser-windows:
-    needs: test
+    needs: build
     runs-on: windows-latest
     steps:
       - name: Checkout
@@ -67,10 +67,10 @@ jobs:
       - name: Run GoReleaser (Windows only)
         run: goreleaser release --clean --config=.goreleaser-windows.yaml
         env:
-          GITHUB_TOKEN: ${{ secrets.GORELEASER_TOKEN }}
+          GORELEASER_TOKEN: ${{ secrets.GORELEASER_TOKEN }}
 
   goreleaser-macos:
-    needs: test
+    needs: build
     runs-on: macos-latest
     steps:
       - name: Checkout
@@ -89,4 +89,4 @@ jobs:
       - name: Run GoReleaser (macOS only)
         run: goreleaser release --clean --config=.goreleaser-darwin.yaml
         env:
-          GITHUB_TOKEN: ${{ secrets.GORELEASER_TOKEN }}
+          GORELEASER_TOKEN: ${{ secrets.GORELEASER_TOKEN }}
