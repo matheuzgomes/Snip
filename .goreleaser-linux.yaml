@@ -42,24 +42,6 @@ changelog:
       - "^docs:"
       - "^test:"
 
-npms:
-    name: "@snip/snip-notes"
-    description: A fast and lightweight note-taking CLI application
-    homepage: https://snip-notes.vercel.app/
-    keywords:
-      - cli
-      - golang
-      - notes
-      - productivity
-    license: MIT
-    author: Marinho matheus.gomes196@gmail.com
-    repository: https://github.com/matheuzgomes/Snip
-    bugs: https://github.com/matheuzgomes/Snip/issues
-    access: public
-    tag: latest
-    format: tar.gz
-    url_template: "https://github.com/matheuzgomes/Snip/releases/download/{{ .Tag }}/{{ .ArtifactName }}"
-
 release:
   footer: >-
 
