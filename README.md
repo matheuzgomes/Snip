@@ -131,6 +131,18 @@ xattr -d com.apple.quarantine /opt/homebrew/bin/snip
 # Go to: System Settings > Privacy & Security > Allow "snip"
 ```
 
+### Install With Go
+
+You can install the `snip` binary directly using Go (requires Go 1.20+):
+
+```bash
+go install github.com/matheuzgomes/Snip@v1.1.0 (specific version)
+```
+
+The binary will be placed in `$GOBIN` (or `$GOPATH/bin`), make sure that directory is in your `PATH`.
+
+
+
 ### Direct Download
 
 Pre-compiled binaries are available in the [releases](https://github.com/matheuzgomes/Snip/releases) page for:
@@ -202,16 +214,6 @@ cd Snip
 go mod download
 go build -o snip main.go
 ```
-
-### Install With Go
-
-You can install the `snip` binary directly using Go (requires Go 1.20+):
-
-```bash
-go install github.com/matheuzgomes/Snip@v1.1.0 (specific version)
-```
-
-The binary will be placed in `$GOBIN` (or `$GOPATH/bin`), make sure that directory is in your `PATH`.
 
 ### Running Tests
 
