@@ -107,7 +107,7 @@ scoop install snip
 scoop update snip
 ```
 
-#### Homebrew (macOS/Linux)
+#### Homebrew (macOS)
 ```bash
 # Add the tap
 brew tap matheuzgomes/homebrew-Snip
@@ -202,6 +202,16 @@ cd Snip
 go mod download
 go build -o snip main.go
 ```
+
+### Install With Go
+
+You can install the `snip` binary directly using Go (requires Go 1.20+):
+
+```bash
+go install github.com/matheuzgomes/Snip@v1.1.0 (specific version)
+```
+
+The binary will be placed in `$GOBIN` (or `$GOPATH/bin`), make sure that directory is in your `PATH`.
 
 ### Running Tests
 
