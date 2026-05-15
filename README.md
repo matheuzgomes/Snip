@@ -10,10 +10,6 @@
 
 A fast and efficient command-line note-taking tool built with Go. Snip helps you capture, organize, and search your notes.
 
-## 🎬 Demo
-
-![Snip Demo](assets/snip_demo.gif)
-
 ## ✨ Features
 
 ### Current Functionality
