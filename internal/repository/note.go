@@ -198,9 +198,10 @@ func (r *repository) Search(term string) ([]*note.Note, error) {
 		SELECT n.id, n.title, n.content
 		FROM notes_fts n
 		WHERE notes_fts MATCH ?
+		LIMIT 50
 	`
 
-	db, err := r.db.Query(query, term)
+	db, err := r.db.Query(query, sanitizeSearchTerm(term))
 	if err != nil {
 		return nil, err
 	}
@@ -260,8 +261,8 @@ func (r *repository) GetTagsByNote(noteID int) ([]*tag.Tag, error) {
 }
 
 func (r *repository) Patch(id int, title string) error {
-	query := `UPDATE notes SET title = ? WHERE id = ?`
-	_, err := r.db.Exec(query, title, id)
+	query := `UPDATE notes SET title = ?, updated_at = ? WHERE id = ?`
+	_, err := r.db.Exec(query, title, time.Now(), id)
 	if err != nil {
 		return err
 	}
@@ -442,4 +443,25 @@ func sanitizeFilename(title string) string {
 	}
 
 	return strings.TrimSpace(title)
+}
+
+// sanitizeSearchTerm escapes FTS4 special characters from user input.
+// Characters stripped: - " * ( ) + ! & | ^ / ~ \
+func sanitizeSearchTerm(term string) string {
+	replacer := strings.NewReplacer(
+		"-", " ",
+		"\"", " ",
+		"*", " ",
+		"(", " ",
+		")", " ",
+		"+", " ",
+		"!", " ",
+		"&", " ",
+		"|", " ",
+		"^", " ",
+		"/", " ",
+		"~", " ",
+		"\\", " ",
+	)
+	return replacer.Replace(term)
 }

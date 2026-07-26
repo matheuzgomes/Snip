@@ -2,6 +2,7 @@ package database
 
 import (
 	"database/sql"
+	"fmt"
 	"os"
 	"path/filepath"
 
@@ -33,6 +34,11 @@ func Connect() (*sql.DB, error) {
 		return nil, err
 	}
 
+	if _, err := db.Exec("PRAGMA foreign_keys = ON"); err != nil {
+		db.Close()
+		return nil, fmt.Errorf("failed to enable foreign keys: %w", err)
+	}
+
 	if err := ensureDatabase(db); err != nil {
 		return nil, err
 	}
@@ -54,7 +60,7 @@ func ensureDatabase(db *sql.DB) error {
 
     CREATE TABLE IF NOT EXISTS tags (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        name TEXT NOT NULL
+        name TEXT NOT NULL UNIQUE
     );
 
     CREATE TABLE IF NOT EXISTS notes_tags (

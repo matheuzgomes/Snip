@@ -2,7 +2,6 @@ package cmd
 
 import (
 	"fmt"
-	"sync"
 
 	"github.com/matheuzgomes/Snip/internal/database"
 	"github.com/matheuzgomes/Snip/internal/handler"
@@ -12,21 +11,29 @@ import (
 var (
 	globalNoteRepo repository.NoteRepository
 	globalTagRepo  repository.TagRepository
-	repoOnce       sync.Once
 )
 
 func getRepository() (repository.NoteRepository, repository.TagRepository, error) {
-	var err error
-	repoOnce.Do(func() {
-		db, connectErr := database.Connect()
-		if connectErr != nil {
-			err = connectErr
-			return
-		}
-		globalNoteRepo, err = repository.NewNoteRepository(db)
-		globalTagRepo, err = repository.NewTagRepository(db)
-	})
-	return globalNoteRepo, globalTagRepo, err
+	if globalNoteRepo != nil && globalTagRepo != nil {
+		return globalNoteRepo, globalTagRepo, nil
+	}
+
+	db, err := database.Connect()
+	if err != nil {
+		return nil, nil, err
+	}
+
+	globalNoteRepo, err = repository.NewNoteRepository(db)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	globalTagRepo, err = repository.NewTagRepository(db)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	return globalNoteRepo, globalTagRepo, nil
 }
 
 func setupHandler() (handler.Handler, error) {
