@@ -1,8 +1,6 @@
 package cmd
 
 import (
-	"fmt"
-
 	"github.com/matheuzgomes/Snip/internal/handler"
 	"github.com/spf13/cobra"
 )
@@ -42,11 +40,9 @@ Examples:
   snip export -s 7d                # Export notes from last week
   snip export --format markdown    # Export notes in markdown format
   snip export -f json              # Export notes in json format`,
-	Run: func(cmd *cobra.Command, args []string) {
-		if err := executeWithHandler(func(h handler.Handler) error {
+	RunE: func(cmd *cobra.Command, args []string) error {
+		return executeWithHandler(func(h handler.Handler) error {
 			return h.ExportNotes(exportSince, exportFormat)
-		}); err != nil {
-			fmt.Printf("Error: %v\n", err)
-		}
+		})
 	},
 }

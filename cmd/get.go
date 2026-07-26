@@ -1,8 +1,6 @@
 package cmd
 
 import (
-	"fmt"
-
 	"github.com/matheuzgomes/Snip/internal/handler"
 	"github.com/spf13/cobra"
 )
@@ -33,11 +31,9 @@ Examples:
   snip show 1 -v           # Same as above (short flag)
   snip show 1 -r           # Render note 1 markdown content`,
 	Args: cobra.ExactArgs(1),
-	Run: func(cmd *cobra.Command, args []string) {
-		if err := executeWithHandler(func(h handler.Handler) error {
+	RunE: func(cmd *cobra.Command, args []string) error {
+		return executeWithHandler(func(h handler.Handler) error {
 			return h.GetNote(args[0], verbose, render)
-		}); err != nil {
-			fmt.Printf("Error: %v\n", err)
-		}
+		})
 	},
 }

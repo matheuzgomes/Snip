@@ -1,8 +1,6 @@
 package cmd
 
 import (
-	"fmt"
-
 	"github.com/matheuzgomes/Snip/internal/handler"
 	"github.com/spf13/cobra"
 )
@@ -24,11 +22,9 @@ Examples:
   snip import                      # Import all markdown notes from the current directory
   snip import --dir notes          # Snip will look for notes starting from your home directory so in this example it will look for notes in ~/notes
   snip import -d notes/work        # Snip will look for notes starting from your home directory so in this example it will look for notes in ~/notes/work`,
-	Run: func(cmd *cobra.Command, args []string) {
-		if err := executeWithHandler(func(h handler.Handler) error {
+	RunE: func(cmd *cobra.Command, args []string) error {
+		return executeWithHandler(func(h handler.Handler) error {
 			return h.ImportNotes(importDir)
-		}); err != nil {
-			fmt.Printf("Error: %v\n", err)
-		}
+		})
 	},
 }

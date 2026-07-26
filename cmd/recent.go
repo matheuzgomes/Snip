@@ -1,8 +1,6 @@
 package cmd
 
 import (
-	"fmt"
-
 	"github.com/matheuzgomes/Snip/internal/handler"
 	"github.com/spf13/cobra"
 )
@@ -29,11 +27,9 @@ Examples:
   snip rec                       # Same as above (alias)
   snip recent --limit 10         # Show 10 recent notes
   snip recent -l 10              # Same as above (short flag)`,
-	Run: func(cmd *cobra.Command, args []string) {
-		if err := executeWithHandler(func(h handler.Handler) error {
+	RunE: func(cmd *cobra.Command, args []string) error {
+		return executeWithHandler(func(h handler.Handler) error {
 			return h.GetRecentNotes(limit)
-		}); err != nil {
-			fmt.Printf("Error: %v\n", err)
-		}
+		})
 	},
 }

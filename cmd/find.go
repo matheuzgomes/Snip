@@ -1,7 +1,6 @@
 package cmd
 
 import (
-	"fmt"
 	"strings"
 
 	"github.com/matheuzgomes/Snip/internal/handler"
@@ -25,11 +24,9 @@ Examples:
 
 Tip: Use quotes for exact phrases, or separate words for broader matching.`,
 	Args: cobra.MinimumNArgs(1),
-	Run: func(cmd *cobra.Command, args []string) {
-		if err := executeWithHandler(func(h handler.Handler) error {
+	RunE: func(cmd *cobra.Command, args []string) error {
+		return executeWithHandler(func(h handler.Handler) error {
 			return h.FindNotes(strings.Join(args, " "))
-		}); err != nil {
-			fmt.Printf("Error: %v\n", err)
-		}
+		})
 	},
 }

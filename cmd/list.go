@@ -1,8 +1,6 @@
 package cmd
 
 import (
-	"fmt"
-
 	"github.com/matheuzgomes/Snip/internal/handler"
 	"github.com/matheuzgomes/Snip/internal/validation"
 	"github.com/spf13/cobra"
@@ -40,12 +38,10 @@ Examples:
   snip list -v                 # Show detailed note information
   snip list --asc --verbose    # Oldest first with full details
   snip list --tag "tag"        # List notes by tag`,
-	Run: func(cmd *cobra.Command, args []string) {
+	RunE: func(cmd *cobra.Command, args []string) error {
 		validator := validation.NewValidator()
-		if err := executeWithHandler(func(h handler.Handler) error {
+		return executeWithHandler(func(h handler.Handler) error {
 			return h.ListNotes(isAsc, verbose, validator.CheckString(listTag))
-		}); err != nil {
-			fmt.Printf("Error: %v\n", err)
-		}
+		})
 	},
 }

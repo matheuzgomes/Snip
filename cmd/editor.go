@@ -11,8 +11,9 @@ var editorCmd = &cobra.Command{
 	Long: `Display information about the currently detected editor and list all available editors on your system.
 
 This command helps you understand which editor Snip will use for editing notes and shows alternatives you can configure.`,
-	Run: func(cmd *cobra.Command, args []string) {
+	RunE: func(cmd *cobra.Command, args []string) error {
 		editorHandler := handler.NewEditorHandler()
 		editorHandler.ShowEditorInfo()
+		return nil
 	},
 }

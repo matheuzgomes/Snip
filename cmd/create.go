@@ -1,7 +1,6 @@
 package cmd
 
 import (
-	"fmt"
 	"strings"
 
 	"github.com/matheuzgomes/Snip/internal/handler"
@@ -35,12 +34,10 @@ Examples:
   snip create Meeting Notes                       # Opens editor for content
   snip create TODO --tag "shopping"               # User provided tag`,
 	Args: cobra.MinimumNArgs(1),
-	Run: func(cmd *cobra.Command, args []string) {
-		if err := executeWithHandler(func(h handler.Handler) error {
-			validator := validation.NewValidator()
+	RunE: func(cmd *cobra.Command, args []string) error {
+		validator := validation.NewValidator()
+		return executeWithHandler(func(h handler.Handler) error {
 			return h.CreateNote(strings.Join(args, " "), validator.CheckString(message), validator.CheckString(tag))
-		}); err != nil {
-			fmt.Printf("Error: %v\n", err)
-		}
+		})
 	},
 }

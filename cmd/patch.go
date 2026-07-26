@@ -1,8 +1,6 @@
 package cmd
 
 import (
-	"fmt"
-
 	"github.com/matheuzgomes/Snip/internal/handler"
 	"github.com/spf13/cobra"
 )
@@ -44,11 +42,9 @@ Examples:
   snip patch 42 --title "New Title" --tag "Meeting"  # Patch note 42 with new title and tag
   snip patch 42 --title "New Title" --tag "Meeting Technology"  # Patch note 42 with new title and two new tags`,
 	Args: cobra.ExactArgs(1),
-	Run: func(cmd *cobra.Command, args []string) {
-		if err := executeWithHandler(func(h handler.Handler) error {
+	RunE: func(cmd *cobra.Command, args []string) error {
+		return executeWithHandler(func(h handler.Handler) error {
 			return h.PatchNote(args[0], &patchTitle, &patchTag)
-		}); err != nil {
-			fmt.Printf("Error: %v\n", err)
-		}
+		})
 	},
 }
