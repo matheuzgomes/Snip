@@ -5,23 +5,32 @@ import (
 	"os"
 	"os/exec"
 	"runtime"
+	"strings"
 )
 
 type EditorHandler struct {
 	detectedEditor string
+	customEditor   string // original $EDITOR value, empty if not set
 }
 
 func NewEditorHandler() *EditorHandler {
+	editor := os.Getenv("EDITOR")
 	return &EditorHandler{
 		detectedEditor: detectEditor(),
+		customEditor:   editor,
 	}
 }
 
-func (e *EditorHandler) HandleEditor(content string) (*os.File, error) {
+func (e *EditorHandler) HandleEditor(content string) (_ *os.File, err error) {
 	tempFile, err := e.CreateTempFile()
 	if err != nil {
 		return nil, err
 	}
+	defer func() {
+		if err != nil {
+			e.RemoveTempFile(tempFile)
+		}
+	}()
 
 	if content != "" {
 		if _, err := tempFile.WriteString(content); err != nil {
@@ -30,7 +39,7 @@ func (e *EditorHandler) HandleEditor(content string) (*os.File, error) {
 		tempFile.Close()
 	}
 
-	editor, args := e.GetEditor()
+	editor, args := e.editorArgs()
 	cmd := exec.Command(editor, append(args, tempFile.Name())...)
 	cmd.Stdin = os.Stdin
 	cmd.Stdout = os.Stdout
@@ -45,7 +54,7 @@ func (e *EditorHandler) HandleEditor(content string) (*os.File, error) {
 
 func detectEditor() string {
 	if editor := os.Getenv("EDITOR"); editor != "" {
-		return editor
+		return strings.Fields(editor)[0]
 	}
 
 	switch runtime.GOOS {
@@ -126,6 +135,14 @@ func isEditorAvailable(editor string) bool {
 	return err == nil
 }
 
+func (e *EditorHandler) editorArgs() (string, []string) {
+	if e.customEditor != "" {
+		parts := strings.Fields(e.customEditor)
+		return parts[0], parts[1:]
+	}
+	return e.GetEditor()
+}
+
 func (e *EditorHandler) GetEditor() (string, []string) {
 	editor := e.detectedEditor
 
@@ -137,7 +154,7 @@ func (e *EditorHandler) GetEditor() (string, []string) {
 	case "atom":
 		return "atom", []string{"--wait"}
 	case "open":
-		return "open", []string{"-t"}
+		return "open", []string{"-tW"}
 	default:
 		return editor, []string{}
 	}
