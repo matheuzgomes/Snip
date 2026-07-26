@@ -146,8 +146,26 @@ The binary will be placed in `$GOBIN` (or `$GOPATH/bin`), make sure that directo
 ### Direct Download
 
 Pre-compiled binaries are available in the [releases](https://github.com/matheuzgomes/Snip/releases) page for:
-- **Linux**: AMD64 and ARM64
+- **Linux**: AMD64
 - **Windows**: AMD64
+
+**Linux (AMD64):**
+```bash
+curl -L https://github.com/matheuzgomes/Snip/releases/download/v1.1.1/snip_Linux_x86_64.tar.gz | tar -xz -C ~/.local/bin
+
+# Ensure ~/.local/bin is in your PATH
+export PATH="$HOME/.local/bin:$PATH"
+```
+
+**macOS (AMD64):**
+```bash
+curl -L https://github.com/matheuzgomes/Snip/releases/download/v1.1.1/snip_Darwin_x86_64.tar.gz | sudo tar -xz -C /usr/local/bin
+```
+
+**macOS (ARM64/Apple Silicon):**
+```bash
+curl -L https://github.com/matheuzgomes/Snip/releases/download/v1.1.1/snip_Darwin_arm64.tar.gz | sudo tar -xz -C /usr/local/bin
+```
 
 ### From Source
 

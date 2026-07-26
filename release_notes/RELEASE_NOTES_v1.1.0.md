@@ -41,7 +41,7 @@ I'm excited to announce **Snip v1.1.0**, bringing you the long-awaited markdown 
 # Scoop (Windows)
 scoop install snip
 
-# Homebrew (macOS/Linux)
+# Homebrew (macOS)
 brew install --cask snip-notes
 
 # Direct Download

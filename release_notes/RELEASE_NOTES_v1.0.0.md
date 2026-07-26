@@ -48,7 +48,7 @@ I'm excited to announce **Snip v1.0.0**, marking a significant milestone in my j
 # Scoop (Windows)
 scoop install snip
 
-# Homebrew (macOS/Linux)
+# Homebrew (macOS)
 brew install --cask snip-notes
 
 # Direct Download
